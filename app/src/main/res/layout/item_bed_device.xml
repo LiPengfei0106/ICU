@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="12pt"
+    android:layout_marginBottom="12pt"
+    android:layout_marginStart="16pt"
+    android:layout_marginEnd="16pt"
+    android:background="@drawable/shape_rectangle_white_radius16"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/tv_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="108pt"
+        android:gravity="center"
+        android:background="@drawable/shape_rectangle_blue_top_left_radius16"
+        android:text="正在探视"
+        android:textSize="20pt"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="match_parent"
+        android:layout_height="96pt"
+        android:textSize="30pt"
+        android:padding="12pt"
+        android:gravity="center"
+        android:textColor="@color/black"
+        tools:text="@string/app_name"
+
+        app:layout_constraintTop_toBottomOf="@id/tv_status"/>
+
+
+    <LinearLayout
+        android:id="@+id/ll_action"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/shape_rectangle_green_bottom_radius16"
+
+        app:layout_constraintTop_toBottomOf="@id/tv_name">
+
+        <TextView
+            android:id="@+id/tv_monitor"
+            android:text="监视"
+            android:gravity="center"
+            android:textSize="24pt"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:layout_width="1pt"
+            android:layout_height="match_parent"
+            android:background="@color/line" />
+
+        <TextView
+            android:id="@+id/tv_call"
+            android:text="呼叫"
+            android:gravity="center"
+            android:textSize="24pt"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
