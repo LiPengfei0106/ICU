@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
  *     version: 1.0
  * </pre>
  */
-@Database(entities = [Device::class],version = 2)
+@Database(entities = [Device::class],version = 2, exportSchema = false)
 abstract class ICUDatabase : RoomDatabase() {
 
     abstract fun deviceDao(): DeviceDao
@@ -68,7 +68,7 @@ abstract class ICUDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL(
                     "ALTER TABLE $TABLE_DEVICE "
-                            + " ADD COLUMN `type` TEXT NOT NULL DEFAULT 'BED'"
+                            + " ADD COLUMN `type` TEXT NOT NULL DEFAULT 'bed'"
                 )
                 database.execSQL(
                         "ALTER TABLE $TABLE_DEVICE "

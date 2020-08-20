@@ -2,7 +2,7 @@ package cn.cleartv.icu
 
 import androidx.annotation.StringDef
 
-@StringDef(DeviceStatus.IDLE, DeviceStatus.CALLING, DeviceStatus.IN_CALL)
+@StringDef(DeviceStatus.DISCONNECT, DeviceStatus.IDLE, DeviceStatus.CALLING, DeviceStatus.IN_CALL)
 @Retention(AnnotationRetention.SOURCE)
 annotation class DeviceStatus {
     companion object {

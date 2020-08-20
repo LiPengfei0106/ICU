@@ -15,7 +15,10 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-//        vectorDrawables.useSupportLibrary = true
+        manifestPlaceholders = [
+                app_name: "ICU",
+                app_icon: "@mipmap/ic_launcher"
+        ]
     }
 
     signingConfigs {
@@ -49,6 +52,49 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
+    flavorDimensions "mode"
+    productFlavors {
+        host {
+            dimension "mode"
+            applicationId "cn.cleartv.icu.host"
+//            applicationIdSuffix '.host'
+            manifestPlaceholders = [
+                    app_name: "护士站主机",
+                    app_icon: "@mipmap/ic_launcher"
+            ]
+        }
+        bed {
+            dimension "mode"
+            applicationId "cn.cleartv.icu.bed"
+//            applicationIdSuffix '.bed'
+            manifestPlaceholders = [
+                    app_name: "病床分机",
+                    app_icon: "@mipmap/ic_launcher"
+            ]
+        }
+        guest {
+            dimension "mode"
+            applicationId "cn.cleartv.icu.guest"
+//            applicationIdSuffix '.guest'
+            manifestPlaceholders = [
+                    app_name: "探视分机",
+                    app_icon: "@mipmap/ic_launcher"
+            ]
+        }
+//        door { dimension "mode" }
+    }
+
+    productFlavors.all {
+        flavor -> flavor.manifestPlaceholders = [DEVICE_TYPE: name]
+    }
+
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            // abc_渠道名_版本名.apk  还可以拼接其他app内容：variant.versionCode  variant.buildType.name
+            outputFileName = "${applicationId}_${variant.name}_${variant.versionName}_${new Date().format("yyMMddHHmm")}.apk"
+        }
     }
 
 }
@@ -87,5 +133,10 @@ dependencies {
     // ktx
     implementation "androidx.activity:activity-ktx:$activity_ktx"
     implementation "androidx.fragment:fragment-ktx:$fragment_ktx"
+
+    implementation project(path: ':lib_voip')
+    implementation "com.squareup.okhttp3:okhttp:$okhttp"
+    implementation "io.reactivex.rxjava2:rxjava:$rxjava"
+    implementation "io.reactivex.rxjava2:rxandroid:$rxandroid"
 
 }

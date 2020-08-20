@@ -28,5 +28,9 @@ class GuestMainFragment : BaseFragment() {
                 "3、因为ICU病房病危重疾病人多，患者病情可能随时发生变化，医护人" +
                 "员将以患者为重，个别时间可能不能及时探视或者介绍病情请您耐心等待，我们谢谢您的配合!"
 
+        btn_request.setOnClickListener {
+            viewModel.callHost()
+        }
+
     }
 }

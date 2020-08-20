@@ -2,12 +2,14 @@ package cn.cleartv.icu.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
+import cn.cleartv.icu.App
 import cn.cleartv.icu.BaseViewModel
 import cn.cleartv.icu.DeviceType
 import cn.cleartv.icu.db.entity.Device
 import cn.cleartv.icu.repository.DeviceRepository
 import cn.cleartv.icu.utils.TimeUtils
-import kotlinx.coroutines.delay
+import cn.cleartv.voip.VoIPClient
+import kotlinx.coroutines.*
 import java.util.*
 
 /**
@@ -54,6 +56,19 @@ class MainViewModel : BaseViewModel() {
         launchUI {
             repository.deleteAllDevice()
         }
+    }
+
+    fun startHeartBeat(){
+        launchUI {
+            while (true){
+                VoIPClient.sendMessage(App.hostNumber,"heartbeat", "mystatus")
+                delay(10000)
+            }
+        }
+    }
+
+    fun callHost(){
+        VoIPClient.startCall(App.hostNumber, audioOn = true, videoOn = true)
     }
 
 }

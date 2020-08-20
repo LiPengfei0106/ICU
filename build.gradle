@@ -10,6 +10,9 @@ buildscript {
     ext.timber = '4.7.1'
     ext.activity_ktx = '1.1.0'
     ext.fragment_ktx = '1.2.5'
+    ext.okhttp = '3.14.4'
+    ext.rxjava = '2.2.6'
+    ext.rxandroid = '2.1.1'
 
     repositories {
         google()

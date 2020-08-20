@@ -6,6 +6,7 @@ import cn.cleartv.icu.BaseFragment
 import cn.cleartv.icu.R
 import cn.cleartv.icu.ui.adapter.BedDeviceAdapter
 import cn.cleartv.icu.ui.adapter.DeviceAdapter
+import kotlinx.android.synthetic.main.fragment_bed_main.*
 
 /**
  * <pre>
@@ -25,6 +26,8 @@ class BedMainFragment : BaseFragment() {
     }
 
     override fun afterInflateView() {
-
+        btn_request.setOnClickListener {
+            viewModel.callHost()
+        }
     }
 }
