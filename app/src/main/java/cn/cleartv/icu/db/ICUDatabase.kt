@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
  *     version: 1.0
  * </pre>
  */
-@Database(entities = [Device::class],version = 2, exportSchema = false)
+@Database(entities = [Device::class],version = 3, exportSchema = false)
 abstract class ICUDatabase : RoomDatabase() {
 
     abstract fun deviceDao(): DeviceDao
@@ -40,25 +40,25 @@ abstract class ICUDatabase : RoomDatabase() {
                         // init
                         if(BuildConfig.DEBUG){
                             CoroutineScope(Dispatchers.IO).launch{
-                                instance.deviceDao().insert(Device("10001001",DeviceType.BED,DeviceStatus.DISCONNECT,"一号床"))
-                                instance.deviceDao().insert(Device("10001002",DeviceType.BED,DeviceStatus.DISCONNECT,"二号床"))
-                                instance.deviceDao().insert(Device("10001003",DeviceType.BED,DeviceStatus.DISCONNECT,"三号床"))
-                                instance.deviceDao().insert(Device("10001004",DeviceType.BED,DeviceStatus.DISCONNECT,"四号床"))
-                                instance.deviceDao().insert(Device("10001005",DeviceType.BED,DeviceStatus.DISCONNECT,"五号床"))
-                                instance.deviceDao().insert(Device("10001006",DeviceType.BED,DeviceStatus.DISCONNECT,"六号床"))
-                                instance.deviceDao().insert(Device("10001007",DeviceType.BED,DeviceStatus.DISCONNECT,"七号床"))
-                                instance.deviceDao().insert(Device("10001008",DeviceType.BED,DeviceStatus.DISCONNECT,"八号床"))
-                                instance.deviceDao().insert(Device("10001009",DeviceType.BED,DeviceStatus.DISCONNECT,"九号床"))
-                                instance.deviceDao().insert(Device("10001010",DeviceType.BED,DeviceStatus.DISCONNECT,"十号床"))
-                                instance.deviceDao().insert(Device("10002001",DeviceType.GUEST,DeviceStatus.DISCONNECT,"探视机一"))
-                                instance.deviceDao().insert(Device("10002002",DeviceType.GUEST,DeviceStatus.DISCONNECT,"探视机二"))
-                                instance.deviceDao().insert(Device("10003001",DeviceType.DOOR,DeviceStatus.DISCONNECT,"门禁机"))
+                                instance.deviceDao().insert(Device("10001001",name = "一号床",type = DeviceType.BED))
+                                instance.deviceDao().insert(Device("10001002",name = "二号床",type = DeviceType.BED))
+                                instance.deviceDao().insert(Device("10001003",name = "三号床",type = DeviceType.BED))
+                                instance.deviceDao().insert(Device("10001004",name = "四号床",type = DeviceType.BED))
+                                instance.deviceDao().insert(Device("10001005",name = "五号床",type = DeviceType.BED))
+                                instance.deviceDao().insert(Device("10001006",name = "六号床",type = DeviceType.BED))
+                                instance.deviceDao().insert(Device("10001007",name = "七号床",type = DeviceType.BED))
+                                instance.deviceDao().insert(Device("10001008",name = "八号床",type = DeviceType.BED))
+                                instance.deviceDao().insert(Device("10001009",name = "九号床",type = DeviceType.BED))
+                                instance.deviceDao().insert(Device("10001010",name = "十号床",type = DeviceType.BED))
+                                instance.deviceDao().insert(Device("10002001",name = "探视机一",type = DeviceType.GUEST))
+                                instance.deviceDao().insert(Device("10002002",name = "探视机二",type = DeviceType.GUEST))
+                                instance.deviceDao().insert(Device("10003001",name = "门禁机",type = DeviceType.DOOR))
                             }
                         }
                     }
                 })
                 // 清理以前的数据库
-//                .fallbackToDestructiveMigration()
+                .fallbackToDestructiveMigration()
                 .addMigrations(MIGRATION_1_2)
                 .build()
 
@@ -68,7 +68,7 @@ abstract class ICUDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL(
                     "ALTER TABLE $TABLE_DEVICE "
-                            + " ADD COLUMN `type` TEXT NOT NULL DEFAULT 'bed'"
+                            + " ADD COLUMN `type` TEXT NOT NULL DEFAULT 'unknown'"
                 )
                 database.execSQL(
                         "ALTER TABLE $TABLE_DEVICE "

@@ -5,6 +5,7 @@ import androidx.room.*
 import cn.cleartv.icu.DeviceType
 import cn.cleartv.icu.db.entity.Device
 
+
 /**
  * <pre>
  *     author : Lee
@@ -19,7 +20,7 @@ interface DeviceDao {
     // suspend keyword can not be used with Dao function return type is LiveData
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(device: Device): Long
+    suspend fun insert(device: Device)
 
     @Query("SELECT * FROM devices_table where number=:number limit 1")
     fun get(number: String): LiveData<Device?>
@@ -38,4 +39,10 @@ interface DeviceDao {
 
     @Query("DELETE FROM devices_table")
     suspend fun deleteAll()
+
+    @Query("DELETE FROM devices_table")
+    suspend fun updateDeviceStatus()
+
+    @Query("UPDATE devices_table SET status='DISCONNECT' WHERE status!='DISCONNECT' AND lastOnLineTime+:timeoutMillis<:currentTimeMillis")
+    suspend fun updateOfflineStatus(timeoutMillis: Int,currentTimeMillis: Long = System.currentTimeMillis())
 }

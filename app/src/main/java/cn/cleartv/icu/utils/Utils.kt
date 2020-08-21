@@ -16,10 +16,7 @@ object Utils {
 
     private var toast: Toast? = null
     fun showToast(content: String) {
-        (toast ?: (Toast(App.instance).apply {
-            duration = Toast.LENGTH_SHORT
-            toast = this
-        })).let {
+        (toast ?: (Toast.makeText(App.instance,content,Toast.LENGTH_SHORT))).let {
             it.setText(content)
             it.show()
         }

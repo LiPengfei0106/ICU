@@ -15,6 +15,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
         manifestPlaceholders = [
                 app_name: "ICU",
                 app_icon: "@mipmap/ic_launcher"
@@ -59,7 +60,6 @@ android {
         host {
             dimension "mode"
             applicationId "cn.cleartv.icu.host"
-//            applicationIdSuffix '.host'
             manifestPlaceholders = [
                     app_name: "护士站主机",
                     app_icon: "@mipmap/ic_launcher"
@@ -68,7 +68,6 @@ android {
         bed {
             dimension "mode"
             applicationId "cn.cleartv.icu.bed"
-//            applicationIdSuffix '.bed'
             manifestPlaceholders = [
                     app_name: "病床分机",
                     app_icon: "@mipmap/ic_launcher"
@@ -77,7 +76,6 @@ android {
         guest {
             dimension "mode"
             applicationId "cn.cleartv.icu.guest"
-//            applicationIdSuffix '.guest'
             manifestPlaceholders = [
                     app_name: "探视分机",
                     app_icon: "@mipmap/ic_launcher"
@@ -138,5 +136,16 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:$okhttp"
     implementation "io.reactivex.rxjava2:rxjava:$rxjava"
     implementation "io.reactivex.rxjava2:rxandroid:$rxandroid"
+
+    // fastjson对kotlin支持不好；Gson还行，但不支持空安全检查
+//    implementation "com.alibaba:fastjson:$fastjson"
+
+    // A modern JSON library for Kotlin and Java.
+//    implementation "com.squareup.moshi:moshi:1.9.3"
+    implementation "com.squareup.moshi:moshi-kotlin:$moshi"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi"
+
+    implementation "androidx.multidex:multidex:$multidex_version"
+
 
 }

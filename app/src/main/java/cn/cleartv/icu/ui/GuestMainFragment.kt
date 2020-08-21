@@ -1,8 +1,13 @@
 package cn.cleartv.icu.ui
 
+import android.Manifest
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
+import cn.cleartv.icu.App
 import cn.cleartv.icu.BaseFragment
 import cn.cleartv.icu.R
+import cn.cleartv.icu.db.entity.Device
+import cn.cleartv.icu.utils.PermissionUtils
 import kotlinx.android.synthetic.main.fragment_guest_main.*
 
 /**
@@ -16,7 +21,8 @@ import kotlinx.android.synthetic.main.fragment_guest_main.*
  */
 class GuestMainFragment : BaseFragment() {
 
-    private val viewModel: MainViewModel by activityViewModels()
+    private val mainViewModel: MainViewModel by activityViewModels()
+    private val callViewModel: CallViewModel by activityViewModels()
 
     override fun viewLayoutRes(): Int {
         return R.layout.fragment_guest_main
@@ -29,8 +35,22 @@ class GuestMainFragment : BaseFragment() {
                 "员将以患者为重，个别时间可能不能及时探视或者介绍病情请您耐心等待，我们谢谢您的配合!"
 
         btn_request.setOnClickListener {
-            viewModel.callHost()
+            PermissionUtils.checkPermission(requireActivity(),
+                arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO),
+                Runnable {
+                    callViewModel.callDevice = Device(App.hostNumber,App.hostNumber)
+                    callViewModel.amCaller = true
+                    addFragment(CallFragment())
+                })
         }
+
+        mainViewModel.callDevices.observe(this, Observer {
+            it.keys.firstOrNull()?.let {key->
+                callViewModel.callDevice = it[key]
+                callViewModel.amCaller = false
+                addFragment(CallFragment())
+            }
+        })
 
     }
 }

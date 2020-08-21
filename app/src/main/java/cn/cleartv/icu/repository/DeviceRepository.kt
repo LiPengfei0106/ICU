@@ -31,7 +31,7 @@ class DeviceRepository {
     }
 
     suspend fun addDevice(device: Device){
-        device.id = deviceDao.insert(device).toInt()
+        deviceDao.insert(device)
     }
 
     suspend fun deleteDevice(device: Device){
@@ -40,5 +40,9 @@ class DeviceRepository {
 
     suspend fun deleteAllDevice(){
         deviceDao.deleteAll()
+    }
+
+    suspend fun updateOfflineStatus(timeoutMillis: Int = 10000){
+        deviceDao.updateOfflineStatus(timeoutMillis)
     }
 }

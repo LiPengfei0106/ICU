@@ -5,6 +5,7 @@ import androidx.room.PrimaryKey
 import cn.cleartv.icu.DeviceStatus
 import cn.cleartv.icu.DeviceType
 import cn.cleartv.icu.db.ICUDatabase
+import com.squareup.moshi.JsonClass
 
 /**
  * <pre>
@@ -15,14 +16,32 @@ import cn.cleartv.icu.db.ICUDatabase
  *     version: 1.0
  * </pre>
  */
+@JsonClass(generateAdapter = true)
 @Entity(tableName = ICUDatabase.TABLE_DEVICE)
 data class Device(
+    @PrimaryKey
     var number: String,
-    @DeviceType var type: String = DeviceType.BED,
-    @DeviceStatus var status: String = DeviceStatus.DISCONNECT,
     var name: String = "",
-    var description: String = ""
+    @DeviceType var type: String = DeviceType.BED
 ) {
-    @PrimaryKey(autoGenerate = true)
-    var id: Int = 0
+
+    @DeviceStatus
+    var status: String = DeviceStatus.DISCONNECT
+        @Synchronized set
+
+    var description: String = ""
+    var callNumber: String = ""
+    var lastOnLineTime: Long = -1L
+
+    override fun toString(): String {
+        return "Device(" +
+                "number='$number', " +
+                "type='$type', " +
+                "status='$status', " +
+                "name='$name', " +
+                "description='$description', " +
+                "callNumber='$callNumber', " +
+                "lastOnLineTime=$lastOnLineTime" +
+                ")"
+    }
 }

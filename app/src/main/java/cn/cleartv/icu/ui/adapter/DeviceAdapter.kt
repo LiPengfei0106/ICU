@@ -22,11 +22,11 @@ class DeviceAdapter(data: MutableList<Device>?) :
     init {
         setDiffCallback(object: DiffUtil.ItemCallback<Device>(){
             override fun areItemsTheSame(oldItem: Device, newItem: Device): Boolean {
-                return oldItem.id == newItem.id
+                return oldItem.number == newItem.number
             }
 
             override fun areContentsTheSame(oldItem: Device, newItem: Device): Boolean {
-                return oldItem.number == newItem.number
+                return oldItem.status == newItem.status
                         && oldItem.name == newItem.name
                         && oldItem.description == newItem.description
             }
@@ -50,7 +50,7 @@ class DeviceAdapter(data: MutableList<Device>?) :
                 holder.setBackgroundResource(R.id.tv_status, R.drawable.shape_rectangle_red_top_radius16)
                     .setText(R.id.tv_status, "呼叫中")
             }
-            DeviceStatus.IN_CALL -> {
+            DeviceStatus.IN_CALL_CALLEE, DeviceStatus.IN_CALL_CALLER -> {
                 holder.setBackgroundResource(R.id.tv_status, R.drawable.shape_rectangle_orange_top_radius16)
                     .setText(R.id.tv_status, "通话中")
             }

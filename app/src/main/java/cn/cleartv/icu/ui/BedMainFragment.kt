@@ -1,11 +1,13 @@
 package cn.cleartv.icu.ui
 
+import android.Manifest
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import cn.cleartv.icu.App
 import cn.cleartv.icu.BaseFragment
 import cn.cleartv.icu.R
-import cn.cleartv.icu.ui.adapter.BedDeviceAdapter
-import cn.cleartv.icu.ui.adapter.DeviceAdapter
+import cn.cleartv.icu.db.entity.Device
+import cn.cleartv.icu.utils.PermissionUtils
 import kotlinx.android.synthetic.main.fragment_bed_main.*
 
 /**
@@ -19,7 +21,8 @@ import kotlinx.android.synthetic.main.fragment_bed_main.*
  */
 class BedMainFragment : BaseFragment() {
 
-    private val viewModel: MainViewModel by activityViewModels()
+    private val mainViewModel: MainViewModel by activityViewModels()
+    private val callViewModel: CallViewModel by activityViewModels()
 
     override fun viewLayoutRes(): Int {
         return R.layout.fragment_bed_main
@@ -27,7 +30,22 @@ class BedMainFragment : BaseFragment() {
 
     override fun afterInflateView() {
         btn_request.setOnClickListener {
-            viewModel.callHost()
+            PermissionUtils.checkPermission(requireActivity(),
+                arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO),
+                Runnable {
+                    callViewModel.callDevice = Device(App.hostNumber, App.hostNumber)
+                    callViewModel.amCaller = true
+                    addFragment(CallFragment())
+                })
         }
+
+
+        mainViewModel.callDevices.observe(this, Observer {
+            it.keys.firstOrNull()?.let {key->
+                callViewModel.callDevice = it[key]
+                callViewModel.amCaller = false
+                addFragment(CallFragment())
+            }
+        })
     }
 }
