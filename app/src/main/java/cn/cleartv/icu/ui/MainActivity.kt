@@ -6,13 +6,8 @@ import cn.cleartv.icu.App
 import cn.cleartv.icu.BaseActivity
 import cn.cleartv.icu.DeviceType
 import cn.cleartv.icu.R
-import cn.cleartv.icu.db.entity.Device
-import cn.cleartv.icu.utils.JsonUtils
-import cn.cleartv.voip.VoIPClient
-import cn.cleartv.voip.entity.VoIPMember
+import cn.cleartv.icu.ui.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
-import org.json.JSONObject
-import timber.log.Timber
 
 class MainActivity : BaseActivity() {
 
@@ -27,19 +22,38 @@ class MainActivity : BaseActivity() {
             tv_date.text = it
         })
 
+        /**
+         *
+        parentFragmentManager.beginTransaction()
+        .hide(this)
+        .add(R.id.fl_content, fragment, fragment.javaClass.simpleName)
+        .addToBackStack(fragment.javaClass.simpleName)
+        .commitAllowingStateLoss()
+         */
+
         when (App.deviceType) {
             DeviceType.HOST -> supportFragmentManager.beginTransaction()
-                .add(R.id.fl_content, HostMainFragment()).commit()
+                .add(R.id.fl_content, MainHostFragment(),MainHostFragment::class.java.simpleName)
+                .addToBackStack(MainHostFragment::class.java.simpleName)
+                .commitAllowingStateLoss()
             DeviceType.BED -> supportFragmentManager.beginTransaction()
-                .add(R.id.fl_content, BedMainFragment()).commit()
+                .add(R.id.fl_content, MainBedFragment(),MainBedFragment::class.java.simpleName)
+                .addToBackStack(MainBedFragment::class.java.simpleName)
+                .commitAllowingStateLoss()
             DeviceType.GUEST -> supportFragmentManager.beginTransaction()
-                .add(R.id.fl_content, GuestMainFragment()).commit()
+                .add(R.id.fl_content, MainGuestFragment(),MainGuestFragment::class.java.simpleName)
+                .addToBackStack(MainGuestFragment::class.java.simpleName)
+                .commitAllowingStateLoss()
         }
         if (App.deviceType != DeviceType.HOST) {
             viewModel.startHeartBeat()
         } else {
             viewModel.startCheckDeviceOnLine()
         }
+    }
+
+    override fun onBackPressed() {
+
     }
 
 }

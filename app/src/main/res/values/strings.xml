@@ -1,3 +1,11 @@
 <resources>
-
+    <string-array name="transfer_time">
+        <item>无限制</item>
+        <item>5min</item>
+        <item>10min</item>
+        <item>15min</item>
+        <item>20min</item>
+        <item>25min</item>
+        <item>30min</item>
+    </string-array>
 </resources>

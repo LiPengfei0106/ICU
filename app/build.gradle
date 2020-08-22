@@ -17,8 +17,8 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         manifestPlaceholders = [
-                app_name: "ICU",
-                app_icon: "@mipmap/ic_launcher"
+                appName: "ICU",
+                appIcon: "@mipmap/ic_launcher"
         ]
     }
 
@@ -61,24 +61,24 @@ android {
             dimension "mode"
             applicationId "cn.cleartv.icu.host"
             manifestPlaceholders = [
-                    app_name: "护士站主机",
-                    app_icon: "@mipmap/ic_launcher"
+                    appName: "护士站主机",
+                    appIcon: "@mipmap/ic_launcher"
             ]
         }
         bed {
             dimension "mode"
             applicationId "cn.cleartv.icu.bed"
             manifestPlaceholders = [
-                    app_name: "病床分机",
-                    app_icon: "@mipmap/ic_launcher"
+                    appName: "病床分机",
+                    appIcon: "@mipmap/ic_launcher"
             ]
         }
         guest {
             dimension "mode"
             applicationId "cn.cleartv.icu.guest"
             manifestPlaceholders = [
-                    app_name: "探视分机",
-                    app_icon: "@mipmap/ic_launcher"
+                    appName: "探视分机",
+                    appIcon: "@mipmap/ic_launcher"
             ]
         }
 //        door { dimension "mode" }

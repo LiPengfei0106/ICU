@@ -67,17 +67,72 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
-            <include
+            <LinearLayout
                 android:id="@+id/btn_transfer"
-                layout="@layout/button_transfer"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="12pt">
 
-            <include
+                <ImageView
+                    android:layout_width="100pt"
+                    android:layout_height="100pt"
+                    android:src="@drawable/ic_transfer"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="24pt"
+                    android:layout_marginTop="12pt"
+                    android:text="转接"/>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/btn_hangup"
-                layout="@layout/button_hangup"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="12pt">
 
-            <include
+                <ImageView
+                    android:layout_width="100pt"
+                    android:layout_height="100pt"
+                    android:src="@drawable/ic_hangup"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="24pt"
+                    android:layout_marginTop="12pt"
+                    android:text="挂断"/>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/btn_camera"
-                layout="@layout/button_camera"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="12pt">
+
+                <ImageView
+                    android:layout_width="100pt"
+                    android:layout_height="100pt"
+                    android:src="@drawable/ic_camera"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="24pt"
+                    android:layout_marginTop="12pt"
+                    android:text="摄像头"/>
+
+            </LinearLayout>
+
         </LinearLayout>
 
 

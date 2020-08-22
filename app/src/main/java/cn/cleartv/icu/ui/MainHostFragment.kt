@@ -1,12 +1,16 @@
 package cn.cleartv.icu.ui
 
 import android.Manifest
+import android.content.Intent
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import cn.cleartv.icu.BaseFragment
 import cn.cleartv.icu.R
 import cn.cleartv.icu.ui.adapter.BedDeviceAdapter
 import cn.cleartv.icu.ui.adapter.DeviceAdapter
+import cn.cleartv.icu.ui.viewmodel.CallViewModel
+import cn.cleartv.icu.ui.viewmodel.MainViewModel
+import cn.cleartv.icu.ui.viewmodel.MonitorViewModel
 import cn.cleartv.icu.utils.PermissionUtils
 import kotlinx.android.synthetic.main.fragment_host_main.*
 
@@ -19,7 +23,7 @@ import kotlinx.android.synthetic.main.fragment_host_main.*
  *     version: 1.0
  * </pre>
  */
-class HostMainFragment : BaseFragment() {
+class MainHostFragment : BaseFragment() {
 
     private val mainViewModel: MainViewModel by activityViewModels()
     private val callViewModel: CallViewModel by activityViewModels()
@@ -37,54 +41,64 @@ class HostMainFragment : BaseFragment() {
                     Runnable {
                         when(view.id){
                             R.id.tv_monitor -> {
-                                addFragment(MonitorFragment())
+//                                addFragment(MonitorFragment())
                             }
                             R.id.tv_call -> {
-                                callViewModel.callDevice = (adapter as BedDeviceAdapter).getItem(position)
-                                callViewModel.amCaller = true
-                                addFragment(CallFragment())
+                                Intent(requireContext(),CallActivity::class.java).apply {
+                                    putExtra("number",(adapter as BedDeviceAdapter).getItem(position).number)
+                                    putExtra("amCaller",true)
+                                    startActivity(this)
+                                }
                             }
                         }
                     })
             }
         }
         rv_door.adapter = DeviceAdapter(ArrayList()).apply {
-            setOnItemClickListener { adapter, view, position ->
+            setOnItemClickListener { adapter, _, position ->
                 PermissionUtils.checkPermission(requireActivity(),
                     arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO),
                     Runnable {
-                        callViewModel.callDevice = (adapter as DeviceAdapter).getItem(position)
-                        callViewModel.amCaller = true
-                        addFragment(CallFragment())
+                        Intent(requireContext(),CallActivity::class.java).apply {
+                            putExtra("number",(adapter as DeviceAdapter).getItem(position).number)
+                            putExtra("amCaller",true)
+                            startActivity(this)
+                        }
                     })
             }
         }
         rv_guest.adapter = DeviceAdapter(ArrayList()).apply {
-            setOnItemClickListener { adapter, view, position ->
+            setOnItemClickListener { adapter, _, position ->
                 PermissionUtils.checkPermission(requireActivity(),
                     arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO),
                     Runnable {
-                        callViewModel.callDevice = (adapter as DeviceAdapter).getItem(position)
-                        callViewModel.amCaller = true
-                        addFragment(CallFragment())
+                        Intent(requireContext(),CallActivity::class.java).apply {
+                            putExtra("number",(adapter as DeviceAdapter).getItem(position).number)
+                            putExtra("amCaller",true)
+                            startActivity(this)
+                        }
                     })
             }
         }
-        mainViewModel.bedDevices.observe(this, Observer {
+        mainViewModel.bedDevices.observe(viewLifecycleOwner, Observer {
             (rv_bed.adapter as BedDeviceAdapter).setDiffNewData(ArrayList(it))
         })
-        mainViewModel.guestDevices.observe(this, Observer {
+        mainViewModel.guestDevices.observe(viewLifecycleOwner, Observer {
             (rv_guest.adapter as DeviceAdapter).setDiffNewData(ArrayList(it))
         })
-        mainViewModel.doorDevices.observe(this, Observer {
+        mainViewModel.doorDevices.observe(viewLifecycleOwner, Observer {
             (rv_door.adapter as DeviceAdapter).setDiffNewData(ArrayList(it))
         })
 
-        mainViewModel.callDevices.observe(this, Observer {
-            it.keys.firstOrNull()?.let {key->
-                callViewModel.callDevice = it[key]
-                callViewModel.amCaller = false
-                addFragment(CallFragment())
+        val callListFragment = CallListFragment()
+        mainViewModel.callDevices.observe(viewLifecycleOwner, Observer {
+            if(!it.isNullOrEmpty()){
+                if(!callListFragment.isVisible){
+                    callListFragment.show(parentFragmentManager,"callList")
+                }
+            }else{
+                if(callListFragment.isVisible)
+                    callListFragment.dismiss()
             }
         })
     }

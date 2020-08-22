@@ -1,27 +1,24 @@
-package cn.cleartv.icu.ui
+package cn.cleartv.icu.repository
 
-import cn.cleartv.icu.BaseViewModel
+import androidx.lifecycle.LiveData
+import cn.cleartv.icu.DeviceType
+import cn.cleartv.icu.db.ICUDatabase
+import cn.cleartv.icu.db.entity.Device
 import cn.cleartv.voip.VoIPClient
 import cn.cleartv.voip.entity.VoIPMember
 import timber.log.Timber
 
 /**
  * <pre>
- *     author : Lee
- *     e-mail : lipengfei@cleartv.cn
- *     time   : 2020/08/21
- *     desc   :
- *     version: 1.0
- * </pre>
+ * author : Lee
+ * e-mail : lipengfei@cleartv.cn
+ * time   : 2020/08/18
+ * desc   :
+ * version: 1.0
+</pre> *
  */
-class MonitorViewModel: BaseViewModel(), VoIPClient.VoIPMonitorListener {
+object MonitorRepository: VoIPClient.VoIPMonitorListener {
 
-    init {
-
-        VoIPClient.monitorListener = this
-//        VoIPClient.startMonitor("","")
-
-    }
 
     override fun onInterCutFailed(msg: String) {
         // TODO 插话失败通知
@@ -57,5 +54,4 @@ class MonitorViewModel: BaseViewModel(), VoIPClient.VoIPMonitorListener {
         // TODO 监听停止
         Timber.d("onMonitorStop")
     }
-
 }

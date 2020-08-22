@@ -16,7 +16,7 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder
  *     version: 1.0
  * </pre>
  */
-class BedDeviceAdapter(data: MutableList<Device>?) :
+class BedDeviceAdapter(data: MutableList<Device>? = null) :
     BaseQuickAdapter<Device, BaseViewHolder>(R.layout.item_bed_device, data) {
 
     init {

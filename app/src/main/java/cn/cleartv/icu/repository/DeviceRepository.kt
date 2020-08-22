@@ -14,7 +14,7 @@ import cn.cleartv.icu.db.entity.Device
  * version: 1.0
 </pre> *
  */
-class DeviceRepository {
+object DeviceRepository {
 
     private val deviceDao = ICUDatabase.instance.deviceDao()
 
@@ -30,7 +30,7 @@ class DeviceRepository {
         return deviceDao.get(number)
     }
 
-    suspend fun addDevice(device: Device){
+    fun addDevice(device: Device){
         deviceDao.insert(device)
     }
 

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="1920pt"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:padding="60pt"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_percent="0.618"
+            android:orientation="vertical" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_devices"
+            android:layout_width="0dp"
+            android:layout_height="800pt"
+            android:layout_marginEnd="16pt"
+            android:background="@drawable/shape_rectangle_white_radius16"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="4"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/guideline"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/ll_info"
+            android:layout_width="0dp"
+            android:layout_height="800pt"
+            android:orientation="vertical"
+            android:layout_marginStart="16pt"
+            android:background="@drawable/shape_rectangle_white_radius16"
+            android:padding="32pt"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/guideline"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageView
+                android:id="@+id/iv_close"
+                android:layout_width="32pt"
+                android:layout_height="32pt"
+                android:layout_gravity="end"
+                android:src="@drawable/ic_close" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="来电转接"
+                android:textSize="36pt"
+                android:padding="18pt"
+                android:textColor="@color/black"
+                android:gravity="center" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16pt">
+
+                <TextView
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="32pt"
+                    android:text="设置通话时长：" />
+
+                <Spinner
+                    android:id="@+id/spinner_time"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:entries="@array/transfer_time" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_transfer_name"
+                android:textSize="64pt"
+                android:textColor="@color/dark_gray"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/btn_transfer"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="48pt"
+                android:padding="24pt"
+                android:paddingStart="48pt"
+                android:paddingEnd="48pt"
+                android:layout_marginBottom="48pt"
+                android:background="@drawable/shape_rectangle_blue_radius60"
+                android:text="转  接" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

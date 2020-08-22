@@ -3,12 +3,15 @@ package cn.cleartv.icu
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import cn.cleartv.icu.utils.OnKeyDownHandlerHelper
 import cn.cleartv.icu.utils.Utils
@@ -23,7 +26,7 @@ import timber.log.Timber
  *     version: 1.0
  * </pre>
  */
-abstract class BaseFragment : Fragment(), OnKeyDownHandlerHelper.FragmentOnKeyDownHandler {
+abstract class BaseDialogFragment : DialogFragment(), OnKeyDownHandlerHelper.FragmentOnKeyDownHandler {
 
 
     override fun onAttach(context: Context) {
@@ -42,6 +45,7 @@ abstract class BaseFragment : Fragment(), OnKeyDownHandlerHelper.FragmentOnKeyDo
         savedInstanceState: Bundle?
     ): View? {
         Timber.d("onCreateView:${this}")
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         return inflater.inflate(viewLayoutRes(), container, false)
     }
 
@@ -101,13 +105,13 @@ abstract class BaseFragment : Fragment(), OnKeyDownHandlerHelper.FragmentOnKeyDo
         parentFragmentManager.beginTransaction().show(fragment).commit()
     }
 
-    protected fun replaceFragment(fragment: BaseFragment) {
+    protected fun replaceFragment(fragment: Fragment) {
         parentFragmentManager.beginTransaction()
             .replace(R.id.fl_content, fragment, fragment.javaClass.simpleName)
             .commitAllowingStateLoss()
     }
 
-    protected fun addFragment(fragment: BaseFragment) {
+    protected fun addFragment(fragment: Fragment) {
         parentFragmentManager.beginTransaction()
             .hide(this)
             .add(R.id.fl_content, fragment, fragment.javaClass.simpleName)
@@ -116,7 +120,7 @@ abstract class BaseFragment : Fragment(), OnKeyDownHandlerHelper.FragmentOnKeyDo
             .commitAllowingStateLoss()
     }
 
-    protected fun removeFragment(fragment: BaseFragment): Boolean {
+    protected fun removeFragment(fragment: Fragment): Boolean {
         parentFragmentManager.let {
             if (it.backStackEntryCount > 1) {
                 Timber.i("removeFragment:$fragment")
@@ -126,10 +130,6 @@ abstract class BaseFragment : Fragment(), OnKeyDownHandlerHelper.FragmentOnKeyDo
             }
         }
         return false
-    }
-
-    protected fun getCurFragment(): Fragment? {
-        return parentFragmentManager.fragments.lastOrNull()
     }
 
     protected open fun startActivity(activityCls: Class<out Activity>) {

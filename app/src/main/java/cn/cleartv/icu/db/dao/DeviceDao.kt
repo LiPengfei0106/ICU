@@ -20,7 +20,7 @@ interface DeviceDao {
     // suspend keyword can not be used with Dao function return type is LiveData
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(device: Device)
+    fun insert(device: Device)
 
     @Query("SELECT * FROM devices_table where number=:number limit 1")
     fun get(number: String): LiveData<Device?>
