@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingStart="60pt"
+    android:paddingEnd="60pt">
+
+    <LinearLayout
+        android:id="@+id/ll_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center|end"
+        android:padding="36pt"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        >
+
+        <TextView
+            android:id="@+id/btn_back"
+            android:drawableStart="@drawable/ic_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textSize="36pt"
+            android:text="返回"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="0dp"/>
+
+        <TextView
+            android:id="@+id/tv_date"
+            android:textSize="36pt"
+            android:layout_marginEnd="36pt"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="36pt"
+
+        app:layout_constraintTop_toBottomOf="@id/ll_top"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <cn.cleartv.voip.VoIPSurfaceView
+        android:id="@+id/video_remote"
+        android:layout_width="1280pt"
+        android:layout_height="960pt"
+        android:layout_marginTop="8pt"
+
+        app:layout_constraintTop_toBottomOf="@id/tv_name"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <cn.cleartv.voip.VoIPSurfaceView
+        android:id="@+id/video_local"
+        android:layout_width="480pt"
+        android:layout_height="360pt"
+
+        app:layout_constraintTop_toTopOf="@id/video_remote"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/transparent_white"
+
+        app:layout_constraintTop_toBottomOf="@id/video_local"
+        app:layout_constraintBottom_toBottomOf="@id/video_remote"
+        app:layout_constraintStart_toStartOf="@id/video_local"
+        app:layout_constraintEnd_toEndOf="@id/video_local"
+        >
+
+        <TextView
+            android:id="@+id/tv_call_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="24pt"
+            android:padding="24pt"
+
+            app:layout_constraintBottom_toTopOf="@id/ll_action"/>
+
+        <LinearLayout
+            android:id="@+id/ll_action"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24pt"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:id="@+id/btn_transfer"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="12pt">
+
+                <ImageView
+                    android:layout_width="100pt"
+                    android:layout_height="100pt"
+                    android:src="@drawable/ic_transfer"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="24pt"
+                    android:layout_marginTop="12pt"
+                    android:text="转接"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/btn_hangup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="12pt">
+
+                <ImageView
+                    android:layout_width="100pt"
+                    android:layout_height="100pt"
+                    android:src="@drawable/ic_hangup"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="24pt"
+                    android:layout_marginTop="12pt"
+                    android:text="挂断"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/btn_camera"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="12pt">
+
+                <ImageView
+                    android:layout_width="100pt"
+                    android:layout_height="100pt"
+                    android:src="@drawable/ic_camera"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="24pt"
+                    android:layout_marginTop="12pt"
+                    android:text="摄像头"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

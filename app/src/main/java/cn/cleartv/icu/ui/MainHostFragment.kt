@@ -5,14 +5,19 @@ import android.content.Intent
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import cn.cleartv.icu.BaseFragment
+import cn.cleartv.icu.DeviceStatus
 import cn.cleartv.icu.R
+import cn.cleartv.icu.db.entity.Device
 import cn.cleartv.icu.ui.adapter.BedDeviceAdapter
 import cn.cleartv.icu.ui.adapter.DeviceAdapter
 import cn.cleartv.icu.ui.viewmodel.CallViewModel
 import cn.cleartv.icu.ui.viewmodel.MainViewModel
 import cn.cleartv.icu.ui.viewmodel.MonitorViewModel
+import cn.cleartv.icu.utils.JsonUtils
 import cn.cleartv.icu.utils.PermissionUtils
 import kotlinx.android.synthetic.main.fragment_host_main.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * <pre>
@@ -27,7 +32,6 @@ class MainHostFragment : BaseFragment() {
 
     private val mainViewModel: MainViewModel by activityViewModels()
     private val callViewModel: CallViewModel by activityViewModels()
-    private val monitorViewModel: MonitorViewModel by activityViewModels()
 
     override fun viewLayoutRes(): Int {
         return R.layout.fragment_host_main
@@ -39,15 +43,33 @@ class MainHostFragment : BaseFragment() {
                 PermissionUtils.checkPermission(requireActivity(),
                     arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO),
                     Runnable {
+                        val device = (adapter as BedDeviceAdapter).getItem(position)
                         when(view.id){
                             R.id.tv_monitor -> {
-//                                addFragment(MonitorFragment())
+                                if(device.status == DeviceStatus.IN_CALL_CALLER || device.status == DeviceStatus.IN_CALL_CALLEE){
+                                    Intent(requireContext(),MonitorActivity::class.java).apply {
+                                        putExtra("device",JsonUtils.toJson(device))
+                                        startActivity(this)
+                                    }
+                                }else{
+                                    toast("该设备未在通话中")
+                                }
                             }
                             R.id.tv_call -> {
-                                Intent(requireContext(),CallActivity::class.java).apply {
-                                    putExtra("number",(adapter as BedDeviceAdapter).getItem(position).number)
-                                    putExtra("amCaller",true)
-                                    startActivity(this)
+                                when(device.status){
+                                    DeviceStatus.IDLE -> {
+                                        Intent(requireContext(),CallActivity::class.java).apply {
+                                            putExtra("number",device.number)
+                                            putExtra("amCaller",true)
+                                            startActivity(this)
+                                        }
+                                    }
+                                    DeviceStatus.IN_CALL_CALLEE,DeviceStatus.IN_CALL_CALLER,DeviceStatus.CALLING -> {
+                                        toast("正在通话中")
+                                    }
+                                    DeviceStatus.DISCONNECT -> {
+                                        toast("设备不在线")
+                                    }
                                 }
                             }
                         }
@@ -59,10 +81,21 @@ class MainHostFragment : BaseFragment() {
                 PermissionUtils.checkPermission(requireActivity(),
                     arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO),
                     Runnable {
-                        Intent(requireContext(),CallActivity::class.java).apply {
-                            putExtra("number",(adapter as DeviceAdapter).getItem(position).number)
-                            putExtra("amCaller",true)
-                            startActivity(this)
+                        val device = (adapter as DeviceAdapter).getItem(position)
+                        when(device.status){
+                            DeviceStatus.IDLE -> {
+                                Intent(requireContext(),CallActivity::class.java).apply {
+                                    putExtra("number",device.number)
+                                    putExtra("amCaller",true)
+                                    startActivity(this)
+                                }
+                            }
+                            DeviceStatus.IN_CALL_CALLEE,DeviceStatus.IN_CALL_CALLER,DeviceStatus.CALLING -> {
+                                toast("正在通话中")
+                            }
+                            DeviceStatus.DISCONNECT -> {
+                                toast("设备不在线")
+                            }
                         }
                     })
             }
@@ -72,10 +105,21 @@ class MainHostFragment : BaseFragment() {
                 PermissionUtils.checkPermission(requireActivity(),
                     arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO),
                     Runnable {
-                        Intent(requireContext(),CallActivity::class.java).apply {
-                            putExtra("number",(adapter as DeviceAdapter).getItem(position).number)
-                            putExtra("amCaller",true)
-                            startActivity(this)
+                        val device = (adapter as DeviceAdapter).getItem(position)
+                        when(device.status){
+                            DeviceStatus.IDLE -> {
+                                Intent(requireContext(),CallActivity::class.java).apply {
+                                    putExtra("number",device.number)
+                                    putExtra("amCaller",true)
+                                    startActivity(this)
+                                }
+                            }
+                            DeviceStatus.IN_CALL_CALLEE,DeviceStatus.IN_CALL_CALLER,DeviceStatus.CALLING -> {
+                                toast("正在通话中")
+                            }
+                            DeviceStatus.DISCONNECT -> {
+                                toast("设备不在线")
+                            }
                         }
                     })
             }

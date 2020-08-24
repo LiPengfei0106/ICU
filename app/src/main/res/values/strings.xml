@@ -1,4 +1,7 @@
 <resources>
+
+    <string name="app_name">app_name</string>
+
     <string-array name="transfer_time">
         <item>无限制</item>
         <item>5min</item>

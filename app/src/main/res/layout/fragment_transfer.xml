@@ -23,6 +23,7 @@
             android:layout_width="0dp"
             android:layout_height="800pt"
             android:layout_marginEnd="16pt"
+            android:padding="12pt"
             android:background="@drawable/shape_rectangle_white_radius16"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:spanCount="4"

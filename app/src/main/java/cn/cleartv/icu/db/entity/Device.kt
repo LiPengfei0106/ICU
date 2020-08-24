@@ -44,4 +44,6 @@ data class Device(
                 "lastOnLineTime=$lastOnLineTime" +
                 ")"
     }
+
+
 }

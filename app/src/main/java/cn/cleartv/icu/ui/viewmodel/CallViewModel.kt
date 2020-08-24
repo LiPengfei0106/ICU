@@ -29,6 +29,9 @@ class CallViewModel : BaseViewModel() {
     val tipData: LiveData<String?> = CallRepository.tipData
     val textData: LiveData<String?> = CallRepository.textData
 
+    var callDuration = 0
+        private set
+
     fun hangup(isTransfer: Boolean = false) {
         CallRepository.callDevices.value?.let {
             if(it.remove(App.deviceInfo.callNumber) != null){
@@ -47,33 +50,42 @@ class CallViewModel : BaseViewModel() {
         )
     }
 
-    fun startCall(number: String, amCaller: Boolean) {
+    fun startCall(number: String, amCaller: Boolean, duration: Int = 0) {
         CallRepository.callDevices.value?.let {
             if(it.remove(number) != null){
                 CallRepository.callDevices.postValue(it)
             }
         }
         CallRepository.resetData(false)
-        App.deviceInfo.callNumber = number
-        App.deviceInfo.status = if (amCaller) DeviceStatus.IN_CALL_CALLER else DeviceStatus.IN_CALL_CALLEE
-        App.deviceInfo.lastOnLineTime = System.currentTimeMillis()
-        VoIPClient.sendMessage(
-            App.hostNumber,
-            "heartbeat",
-            JsonUtils.toJson(App.deviceInfo)
-        )
+        callDuration = duration
         if (amCaller) {
             Timber.d("startCall")
             VoIPClient.startCall(number, true, true, JsonUtils.toJson(App.deviceInfo))
+            App.deviceInfo.callNumber = number
+            App.deviceInfo.status = DeviceStatus.CALLING
+            App.deviceInfo.lastOnLineTime = System.currentTimeMillis()
+            VoIPClient.sendMessage(
+                App.hostNumber,
+                "heartbeat",
+                JsonUtils.toJson(App.deviceInfo)
+            )
         } else {
             Timber.d("acceptCall")
+            App.deviceInfo.callNumber = number
+            App.deviceInfo.status = DeviceStatus.IN_CALL_CALLEE
+            App.deviceInfo.lastOnLineTime = System.currentTimeMillis()
+            VoIPClient.sendMessage(
+                App.hostNumber,
+                "heartbeat",
+                JsonUtils.toJson(App.deviceInfo)
+            )
             VoIPClient.acceptCall(number, true, true, JsonUtils.toJson(App.deviceInfo))
         }
     }
 
     fun transfer(number: String, duration: Int) {
         hangup(true)
-        startCall(number,true)
+        startCall(number,true,duration)
     }
 
 }

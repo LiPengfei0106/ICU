@@ -18,6 +18,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.CallActivity" />
+        <activity android:name=".ui.MonitorActivity" />
 
     </application>
 

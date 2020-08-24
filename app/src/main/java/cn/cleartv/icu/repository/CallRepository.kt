@@ -1,6 +1,8 @@
 package cn.cleartv.icu.repository
 
 import androidx.lifecycle.MutableLiveData
+import cn.cleartv.icu.App
+import cn.cleartv.icu.DeviceStatus
 import cn.cleartv.icu.db.entity.Device
 import cn.cleartv.icu.utils.JsonUtils
 import cn.cleartv.voip.VoIPClient
@@ -26,6 +28,7 @@ object CallRepository: VoIPClient.VoIPCallListener,
     val textData = MutableLiveData<String?>()
     val tipData = MutableLiveData<String?>()
 
+
     val callDevices = MutableLiveData<HashMap<String, Device>>().apply {
         value = HashMap()
     }
@@ -43,6 +46,13 @@ object CallRepository: VoIPClient.VoIPCallListener,
 
     override fun onCallConnected(member: VoIPMember) {
         Timber.d("onCallConnected: \n ${member.toJsonString()}")
+        App.deviceInfo.status = if (member.userNum == App.deviceInfo.callNumber) DeviceStatus.IN_CALL_CALLER else DeviceStatus.IN_CALL_CALLEE
+        App.deviceInfo.lastOnLineTime = System.currentTimeMillis()
+        VoIPClient.sendMessage(
+            App.hostNumber,
+            "heartbeat",
+            JsonUtils.toJson(App.deviceInfo)
+        )
         remoteInfoData.postValue(member)
         isTransfer = false
     }

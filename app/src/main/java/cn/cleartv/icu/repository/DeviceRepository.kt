@@ -26,7 +26,7 @@ object DeviceRepository {
         return deviceDao.getAllDevices()
     }
 
-    fun getDevice(number: String): LiveData<Device?>{
+    suspend fun getDevice(number: String): Device?{
         return deviceDao.get(number)
     }
 

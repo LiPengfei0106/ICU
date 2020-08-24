@@ -22,14 +22,13 @@ import kotlinx.android.synthetic.main.fragment_call_list.*
 class CallListFragment : BaseDialogFragment() {
 
     private val mainViewModel: MainViewModel by activityViewModels()
-    private val callViewModel: CallViewModel by activityViewModels()
 
     override fun viewLayoutRes(): Int {
         return R.layout.fragment_call_list
     }
 
     override fun afterInflateView() {
-        rv_devices
+        isCancelable = false
         rv_devices.adapter = DeviceAdapter().apply {
             setOnItemClickListener { adapter, view, position ->
                 Intent(requireContext(),CallActivity::class.java).apply {

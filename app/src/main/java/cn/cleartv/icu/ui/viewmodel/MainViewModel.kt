@@ -39,13 +39,6 @@ class MainViewModel : BaseViewModel() {
 
     val callDevices: LiveData<HashMap<String,Device>> = CallRepository.callDevices
 
-    val dateTime = liveData {
-        while (true) {
-            emit(TimeUtils.nowString + "  " + TimeUtils.getChineseWeek(Date()))
-            delay(1000)
-        }
-    }
-
     fun startHeartBeat() {
         launchUI {
             while (true) {

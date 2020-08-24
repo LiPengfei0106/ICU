@@ -84,10 +84,6 @@ android {
 //        door { dimension "mode" }
     }
 
-    productFlavors.all {
-        flavor -> flavor.manifestPlaceholders = [DEVICE_TYPE: name]
-    }
-
     android.applicationVariants.all { variant ->
         variant.outputs.all {
             // abc_渠道名_版本名.apk  还可以拼接其他app内容：variant.versionCode  variant.buildType.name

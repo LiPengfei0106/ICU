@@ -18,7 +18,7 @@ class MainActivity : BaseActivity() {
     }
 
     override fun afterSetContentView() {
-        viewModel.dateTime.observe(this, Observer {
+        App.dateTime.observe(this, Observer {
             tv_date.text = it
         })
 

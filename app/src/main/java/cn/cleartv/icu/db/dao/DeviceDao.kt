@@ -23,7 +23,7 @@ interface DeviceDao {
     fun insert(device: Device)
 
     @Query("SELECT * FROM devices_table where number=:number limit 1")
-    fun get(number: String): LiveData<Device?>
+    fun get(number: String): Device?
 
     @Update
     suspend fun update(device: Device)
@@ -31,10 +31,10 @@ interface DeviceDao {
     @Delete
     suspend fun delete(device: Device)
 
-    @Query("SELECT * FROM devices_table")
+    @Query("SELECT * FROM devices_table ORDER BY number ASC")
     fun getAllDevices(): LiveData<List<Device>>
 
-    @Query("SELECT * FROM devices_table WHERE type=:type")
+    @Query("SELECT * FROM devices_table WHERE type=:type ORDER BY number ASC")
     fun getDevicesByType(@DeviceType type: String): LiveData<List<Device>>
 
     @Query("DELETE FROM devices_table")

@@ -6,6 +6,7 @@ import android.widget.ArrayAdapter
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import cn.cleartv.icu.BaseDialogFragment
+import cn.cleartv.icu.DeviceStatus
 import cn.cleartv.icu.R
 import cn.cleartv.icu.db.entity.Device
 import cn.cleartv.icu.ui.adapter.DeviceAdapter
@@ -28,7 +29,7 @@ class TransferFragment : BaseDialogFragment() {
 
     private val mainViewModel: MainViewModel by activityViewModels()
     private var transferDevice: Device? = null
-    private var transferDuration = -1
+    private var transferDurationSec = -1
 
     override fun viewLayoutRes(): Int {
         return R.layout.fragment_transfer
@@ -37,8 +38,20 @@ class TransferFragment : BaseDialogFragment() {
     override fun afterInflateView() {
         rv_devices.adapter = DeviceAdapter().apply {
             setOnItemClickListener { adapter, view, position ->
-                transferDevice = (adapter as DeviceAdapter).getItem(position)
-                tv_transfer_name.text = transferDevice?.name
+
+                val device = (adapter as DeviceAdapter).getItem(position)
+                when(device.status){
+                    DeviceStatus.IDLE -> {
+                        transferDevice = device
+                        tv_transfer_name.text = transferDevice?.name
+                    }
+                    DeviceStatus.DISCONNECT -> {
+                        toast("设备不在线")
+                    }
+                    else -> {
+                        toast("设备忙")
+                    }
+                }
             }
         }
         mainViewModel.bedDevices.observe(viewLifecycleOwner, Observer {
@@ -61,7 +74,7 @@ class TransferFragment : BaseDialogFragment() {
                 position: Int,
                 id: Long
             ) {
-                transferDuration = position * 300000
+                transferDurationSec = position * 300
             }
 
         }
@@ -71,7 +84,7 @@ class TransferFragment : BaseDialogFragment() {
                 JSONObject().apply {
                     put("action","transfer")
                     put("device",JsonUtils.toJson(it))
-                    put("duration",transferDuration)
+                    put("duration",transferDurationSec)
                     VoIPClient.sendTextMsg(this.toString())
                     dismiss()
                 }

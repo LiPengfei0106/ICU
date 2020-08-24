@@ -1,8 +1,6 @@
 package cn.cleartv.icu.repository
 
-import androidx.lifecycle.LiveData
-import cn.cleartv.icu.DeviceType
-import cn.cleartv.icu.db.ICUDatabase
+import androidx.lifecycle.MutableLiveData
 import cn.cleartv.icu.db.entity.Device
 import cn.cleartv.voip.VoIPClient
 import cn.cleartv.voip.entity.VoIPMember
@@ -19,39 +17,64 @@ import timber.log.Timber
  */
 object MonitorRepository: VoIPClient.VoIPMonitorListener {
 
+    var monitorDevice: Device? = null
+    val localMember = MutableLiveData<VoIPMember?>()
+    val currentMonitorMember = MutableLiveData<VoIPMember?>()
+    val otherMonitorMember = MutableLiveData<VoIPMember?>()
+    val exitData = MutableLiveData<String?>()
+    val tipData = MutableLiveData<String?>()
+    val isInterCut = MutableLiveData(false)
+
+    fun resetData(){
+        localMember.value = null
+        currentMonitorMember.value = null
+        otherMonitorMember.value = null
+        exitData.value = null
+        tipData.value = null
+        isInterCut.value = false
+    }
 
     override fun onInterCutFailed(msg: String) {
-        // TODO 插话失败通知
         Timber.d("onInterCutFailed: \n $msg")
+        tipData.postValue(msg)
+        isInterCut.postValue(false)
     }
 
     override fun onInterCutSuccess() {
-        // TODO 插话成功通知
         Timber.d("onInterCutSuccess")
+        tipData.postValue("正在插话")
+        isInterCut.postValue(true)
     }
 
     override fun onMgtInterCutStop() {
-        // TODO 停止插话通知
         Timber.d("onMgtInterCutStop")
+        tipData.postValue("插话结束")
+        isInterCut.postValue(false)
     }
 
     override fun onMonitorConnected(member: VoIPMember) {
-        // TODO 监听成功通知
         Timber.d("onMonitorConnected: \n ${member.toJsonString()}")
+        if(member.userNum == monitorDevice?.number){
+            currentMonitorMember.postValue(member)
+        }else{
+            otherMonitorMember.postValue(member)
+        }
     }
 
     override fun onMonitorDisconnected(msg: String) {
-        // TODO 监听断开通知
         Timber.d("onMonitorDisconnected: \n $msg")
+        exitData.postValue(msg)
+        isInterCut.postValue(false)
     }
 
     override fun onMonitorStart(myInfo: VoIPMember) {
-        // TODO 监听开始
         Timber.d("onMonitorDisconnected: \n ${myInfo.toJsonString()}")
+        localMember.postValue(myInfo)
     }
 
     override fun onMonitorStop() {
-        // TODO 监听停止
         Timber.d("onMonitorStop")
+        exitData.postValue("监听结束")
+        isInterCut.postValue(false)
     }
 }

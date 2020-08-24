@@ -2,6 +2,7 @@ package cn.cleartv.icu
 
 import android.app.Application
 import android.content.Context
+import androidx.lifecycle.liveData
 import androidx.multidex.MultiDex
 import cn.cleartv.icu.db.entity.Device
 import cn.cleartv.icu.repository.CallRepository
@@ -9,9 +10,12 @@ import cn.cleartv.icu.repository.DeviceRepository
 import cn.cleartv.icu.repository.MonitorRepository
 import cn.cleartv.icu.utils.JsonUtils
 import cn.cleartv.icu.utils.LogTree
+import cn.cleartv.icu.utils.TimeUtils
 import cn.cleartv.voip.VoIPClient
+import kotlinx.coroutines.delay
 import org.json.JSONObject
 import timber.log.Timber
+import java.util.*
 
 
 /**
@@ -32,6 +36,13 @@ class App : Application(), VoIPClient.VoIPListener {
         lateinit var deviceType: String
         lateinit var hostNumber: String
         lateinit var deviceInfo: Device
+
+        val dateTime = liveData {
+            while (true) {
+                emit(TimeUtils.nowString + "  " + TimeUtils.getChineseWeek(Date()))
+                delay(1000)
+            }
+        }
     }
 
     override fun attachBaseContext(base: Context) {
