@@ -38,7 +38,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
 
     override fun getResources(): Resources {
-        return AdaptScreenUtils.adaptWidth(super.getResources(), 1920)
+        return AdaptScreenUtils.adaptWidth(super.getResources(), App.adapterWidth)
     }
 
     protected open fun toast(msg: String) {

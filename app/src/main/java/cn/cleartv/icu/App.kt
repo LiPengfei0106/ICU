@@ -2,8 +2,10 @@ package cn.cleartv.icu
 
 import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.lifecycle.liveData
 import androidx.multidex.MultiDex
+import androidx.preference.PreferenceManager
 import cn.cleartv.icu.db.entity.Device
 import cn.cleartv.icu.repository.CallRepository
 import cn.cleartv.icu.repository.DeviceRepository
@@ -36,6 +38,9 @@ class App : Application(), VoIPClient.VoIPListener {
         lateinit var deviceType: String
         lateinit var hostNumber: String
         lateinit var deviceInfo: Device
+        var adapterWidth: Int = 1920
+
+        lateinit var settingSP: SharedPreferences
 
         val dateTime = liveData {
             while (true) {
@@ -56,25 +61,38 @@ class App : Application(), VoIPClient.VoIPListener {
 
         Timber.plant(LogTree())
 
+        settingSP = PreferenceManager.getDefaultSharedPreferences(instance)
         deviceType = BuildConfig.FLAVOR
         Timber.i("DeviceType: $deviceType")
-        hostNumber = "10001000"
 
-        VoIPClient.hostUrl = "http://cmcdev.cleartv.cn"
-        when (deviceType) {
-            DeviceType.HOST -> {
-                deviceInfo = Device("10001000", "10001000", type = deviceType)
-                VoIPClient.init(this, "10001000", "123456", BuildConfig.DEBUG)
-            }
-            DeviceType.BED -> {
-                deviceInfo = Device("10001001", "10001001", type = deviceType)
-                VoIPClient.init(this, "10001001", "123456", BuildConfig.DEBUG)
-            }
-            DeviceType.GUEST -> {
-                deviceInfo = Device("10002001", "10002001", type = deviceType)
-                VoIPClient.init(this, "10002001", "123456", BuildConfig.DEBUG)
-            }
-        }
+        adapterWidth = (settingSP.getString("adapter_width", null)?:"1920").toInt()
+
+        val username = settingSP.getString("username", null)?:""
+        val password = settingSP.getString("password", null)?:""
+        hostNumber = settingSP.getString("host_number", null)?:""
+        deviceInfo = Device(
+            username,
+            username,
+            type = deviceType
+        )
+        VoIPClient.hostUrl =
+            settingSP.getString("host_url", null) ?: resources.getString(R.string.host_url)
+        VoIPClient.init(this, username, password, BuildConfig.DEBUG)
+
+//        when (deviceType) {
+//            DeviceType.HOST -> {
+//                deviceInfo = Device("10001000", "10001000", type = deviceType)
+//                VoIPClient.init(this, "10001000", "123456", BuildConfig.DEBUG)
+//            }
+//            DeviceType.BED -> {
+//                deviceInfo = Device("10001001", "10001001", type = deviceType)
+//                VoIPClient.init(this, "10001001", "123456", BuildConfig.DEBUG)
+//            }
+//            DeviceType.GUEST -> {
+//                deviceInfo = Device("10002001", "10002001", type = deviceType)
+//                VoIPClient.init(this, "10002001", "123456", BuildConfig.DEBUG)
+//            }
+//        }
         VoIPClient.statusData.observeForever {
             when (it) {
                 VoIPClient.Status.CONNECTED -> {

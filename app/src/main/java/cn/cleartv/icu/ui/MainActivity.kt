@@ -7,7 +7,11 @@ import cn.cleartv.icu.BaseActivity
 import cn.cleartv.icu.DeviceType
 import cn.cleartv.icu.R
 import cn.cleartv.icu.ui.viewmodel.MainViewModel
+import cn.cleartv.icu.utils.ShellUtil
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class MainActivity : BaseActivity() {
 
@@ -18,30 +22,34 @@ class MainActivity : BaseActivity() {
     }
 
     override fun afterSetContentView() {
+        viewModel.launchUI {
+            withContext(Dispatchers.IO) {
+                Timber.i(ShellUtil.execCommand(
+                    arrayOf("setprop service.adb.tcp.port 5555", "stop adbd", "start adbd"),
+                    true,
+                    false
+                ).toString())
+            }
+        }
         App.dateTime.observe(this, Observer {
             tv_date.text = it
         })
 
-        /**
-         *
-        parentFragmentManager.beginTransaction()
-        .hide(this)
-        .add(R.id.fl_content, fragment, fragment.javaClass.simpleName)
-        .addToBackStack(fragment.javaClass.simpleName)
-        .commitAllowingStateLoss()
-         */
+        btn_setting.setOnClickListener {
+            PasswordFragment().show(supportFragmentManager,"password")
+        }
 
         when (App.deviceType) {
             DeviceType.HOST -> supportFragmentManager.beginTransaction()
-                .add(R.id.fl_content, MainHostFragment(),MainHostFragment::class.java.simpleName)
+                .add(R.id.fl_content, MainHostFragment(), MainHostFragment::class.java.simpleName)
                 .addToBackStack(MainHostFragment::class.java.simpleName)
                 .commitAllowingStateLoss()
             DeviceType.BED -> supportFragmentManager.beginTransaction()
-                .add(R.id.fl_content, MainBedFragment(),MainBedFragment::class.java.simpleName)
+                .add(R.id.fl_content, MainBedFragment(), MainBedFragment::class.java.simpleName)
                 .addToBackStack(MainBedFragment::class.java.simpleName)
                 .commitAllowingStateLoss()
             DeviceType.GUEST -> supportFragmentManager.beginTransaction()
-                .add(R.id.fl_content, MainGuestFragment(),MainGuestFragment::class.java.simpleName)
+                .add(R.id.fl_content, MainGuestFragment(), MainGuestFragment::class.java.simpleName)
                 .addToBackStack(MainGuestFragment::class.java.simpleName)
                 .commitAllowingStateLoss()
         }
@@ -50,9 +58,15 @@ class MainActivity : BaseActivity() {
         } else {
             viewModel.startCheckDeviceOnLine()
         }
+
     }
 
     override fun onBackPressed() {
+
+    }
+
+    override fun onResume() {
+        super.onResume()
 
     }
 

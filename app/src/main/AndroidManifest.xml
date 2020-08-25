@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="cn.cleartv.icu">
 
     <application
@@ -10,7 +11,14 @@
         android:roundIcon="${appIcon}"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.MainActivity">
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:theme="@style/SettingTheme">
+
+        </activity>
+        <activity android:name=".ui.MainActivity"
+            android:screenOrientation="sensorLandscape"
+            tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -19,7 +27,6 @@
         </activity>
         <activity android:name=".ui.CallActivity" />
         <activity android:name=".ui.MonitorActivity" />
-
     </application>
 
 </manifest>

@@ -1,0 +1,62 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory app:title="登录信息">
+
+        <EditTextPreference
+            app:key="host_url"
+            app:title="服务器地址"
+            app:defaultValue="@string/host_url"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:key="host_number"
+            app:title="主机号"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:key="username"
+            app:title="用户名"
+            app:useSimpleSummaryProvider="true" />
+
+        <cn.cleartv.icu.utils.PasswordEditTextPreference
+            app:key="password"
+            app:title="密码" />
+
+        <Preference
+            app:key="reconnect"
+            app:title="重新连接"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="高级设置">
+
+
+        <EditTextPreference
+            app:key="adapter_width"
+            app:title="适配宽度"
+            app:defaultValue="1920"
+            app:useSimpleSummaryProvider="true" />
+
+        <Preference
+            app:key="system_setting"
+            app:title="系统设置"/>
+
+        <Preference
+            app:key="reboot"
+            app:title="重启"/>
+
+<!--        <SwitchPreferenceCompat-->
+<!--            app:key="sync"-->
+<!--            app:title="@string/sync_title" />-->
+
+<!--        <SwitchPreferenceCompat-->
+<!--            app:dependency="sync"-->
+<!--            app:key="attachment"-->
+<!--            app:summaryOff="@string/attachment_summary_off"-->
+<!--            app:summaryOn="@string/attachment_summary_on"-->
+<!--            app:title="@string/attachment_title" />-->
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
