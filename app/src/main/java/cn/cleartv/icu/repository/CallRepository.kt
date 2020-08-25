@@ -7,7 +7,6 @@ import cn.cleartv.icu.db.entity.Device
 import cn.cleartv.icu.utils.JsonUtils
 import cn.cleartv.voip.VoIPClient
 import cn.cleartv.voip.entity.VoIPMember
-import org.json.JSONObject
 import timber.log.Timber
 
 /**
@@ -19,7 +18,7 @@ import timber.log.Timber
  *     version: 1.0
  * </pre>
  */
-object CallRepository: VoIPClient.VoIPCallListener,
+object CallRepository : VoIPClient.VoIPCallListener,
     VoIPClient.VoIPReceivedCallListener {
 
     val localInfoData = MutableLiveData<VoIPMember?>()
@@ -35,7 +34,7 @@ object CallRepository: VoIPClient.VoIPCallListener,
 
     var isTransfer = false
 
-    fun resetData(isTransfer: Boolean){
+    fun resetData(isTransfer: Boolean) {
         this.isTransfer = isTransfer
         tipData.postValue(null)
         textData.postValue(null)
@@ -46,7 +45,9 @@ object CallRepository: VoIPClient.VoIPCallListener,
 
     override fun onCallConnected(member: VoIPMember) {
         Timber.d("onCallConnected: \n ${member.toJsonString()}")
-        App.deviceInfo.status = if (member.userNum == App.deviceInfo.callNumber) DeviceStatus.IN_CALL_CALLER else DeviceStatus.IN_CALL_CALLEE
+        if (DeviceStatus.CALLING == App.deviceInfo.status){
+            App.deviceInfo.status = DeviceStatus.IN_CALL_CALLER
+        }
         App.deviceInfo.lastOnLineTime = System.currentTimeMillis()
         VoIPClient.sendMessage(
             App.hostNumber,
@@ -78,9 +79,9 @@ object CallRepository: VoIPClient.VoIPCallListener,
     override fun onHangup() {
         // 当前通话挂断
         Timber.d("onHangup")
-        if(isTransfer){
+        if (isTransfer) {
             Timber.d("isTransfer")
-        }else{
+        } else {
             exitData.postValue("对方已挂断")
         }
     }
@@ -129,7 +130,7 @@ object CallRepository: VoIPClient.VoIPCallListener,
         // 收到挂断消息
         Timber.d("onHangup: \n $memberNumber")
         callDevices.value?.let {
-            if(it.remove(memberNumber) != null){
+            if (it.remove(memberNumber) != null) {
                 callDevices.postValue(it)
             }
         }
