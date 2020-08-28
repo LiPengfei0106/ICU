@@ -53,7 +53,7 @@ class CallActivity : BaseActivity() {
                 "transfer"
             )
         }
-
+        video_local.setMirror(true)
         if (App.deviceType == DeviceType.HOST) {
             btn_transfer.visibility = View.VISIBLE
         } else {
@@ -69,6 +69,10 @@ class CallActivity : BaseActivity() {
                         "${hasCallTimeMin}:${if(hasCallTimeSec < 10) "0" else ""}${hasCallTimeSec}/$callDurationString"
                 } else {
                     tv_call_time.text = "${hasCallTimeMin}:${if(hasCallTimeSec < 10) "0" else ""}${hasCallTimeSec}"
+                    if(callViewModel.remoteInfoData.value == null){
+                        toast("对方未应答")
+                        finish()
+                    }
                 }
                 if (callViewModel.callDuration > 0) {
                     val leftSec = (callViewModel.callDuration - hasCallTime).toInt()
