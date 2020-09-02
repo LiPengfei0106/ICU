@@ -1,6 +1,9 @@
 package cn.cleartv.icu.ui
 
+import android.content.Context
+import android.media.AudioManager
 import android.view.View
+import android.widget.SeekBar
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import cn.cleartv.icu.App
@@ -11,6 +14,7 @@ import cn.cleartv.icu.db.entity.Device
 import cn.cleartv.icu.repository.DeviceRepository
 import cn.cleartv.icu.ui.viewmodel.CallViewModel
 import cn.cleartv.icu.utils.JsonUtils
+import cn.cleartv.voip.VoIPClient
 import kotlinx.android.synthetic.main.activity_call.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -66,10 +70,11 @@ class CallActivity : BaseActivity() {
                 val hasCallTimeSec = hasCallTime % 60
                 if (callDurationString.isNotBlank()) {
                     tv_call_time.text =
-                        "${hasCallTimeMin}:${if(hasCallTimeSec < 10) "0" else ""}${hasCallTimeSec}/$callDurationString"
+                        "${hasCallTimeMin}:${if (hasCallTimeSec < 10) "0" else ""}${hasCallTimeSec}/$callDurationString"
                 } else {
-                    tv_call_time.text = "${hasCallTimeMin}:${if(hasCallTimeSec < 10) "0" else ""}${hasCallTimeSec}"
-                    if(callViewModel.remoteInfoData.value == null){
+                    tv_call_time.text =
+                        "${hasCallTimeMin}:${if (hasCallTimeSec < 10) "0" else ""}${hasCallTimeSec}"
+                    if (callViewModel.remoteInfoData.value == null && hasCallTime >= 60) {
                         toast("对方未应答")
                         finish()
                     }
@@ -115,10 +120,13 @@ class CallActivity : BaseActivity() {
         })
         callViewModel.remoteInfoData.observe(this, Observer {
             video_remote.member = it
+            startCallTime = System.currentTimeMillis() / 1000
             if (it == null) {
                 video_remote.clearImage()
             } else {
                 callViewModel.launchUI {
+                    btn_call_host.visibility =
+                        if (App.deviceType == DeviceType.BED && it.userNum != App.hostNumber) View.VISIBLE else View.GONE
                     tv_name.text =
                         withContext(Dispatchers.IO) { DeviceRepository.getDevice(it.userNum)?.name }
                 }
@@ -149,6 +157,102 @@ class CallActivity : BaseActivity() {
 
         })
         callViewModel.startCall(callNumber!!, amCaller)
+
+        val manager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        manager.mode = AudioManager.MODE_IN_COMMUNICATION
+        manager.isSpeakerphoneOn = true
+        iv_speaker.setImageResource(if(manager.isSpeakerphoneOn) R.drawable.ic_speaker_on else R.drawable.ic_speaker)
+        btn_speaker.setOnClickListener {
+            if (manager.isSpeakerphoneOn) {
+                manager.isSpeakerphoneOn = false
+                if(!manager.isSpeakerphoneOn){
+                    iv_speaker.setImageResource(R.drawable.ic_speaker)
+                    toast("切换到听筒")
+                }else{
+                    toast("切换扬声器失败")
+                }
+            } else {
+                manager.isSpeakerphoneOn = true
+                if(manager.isSpeakerphoneOn){
+                    iv_speaker.setImageResource(R.drawable.ic_speaker_on)
+                    toast("切换到扬声器")
+                }else{
+                    toast("切换扬声器失败")
+                }
+            }
+            video_remote.member?.mediaStream?.audioTracks?.firstOrNull()?.let {
+            }
+        }
+
+        iv_mic.setImageResource(R.drawable.ic_mic)
+        btn_mic.setOnClickListener {
+            if (video_local.member?.audioOn == true) {
+                VoIPClient.setAudioOn(false)
+                video_local.member?.audioOn = false
+                iv_mic.setImageResource(R.drawable.ic_mic_on)
+                toast("关闭麦克风")
+            } else {
+                VoIPClient.setAudioOn(true)
+                video_local.member?.audioOn = true
+                iv_mic.setImageResource(R.drawable.ic_mic)
+                toast("打开麦克风")
+            }
+        }
+
+        sb_voice.max = manager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
+        sb_voice.progress = manager.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
+        val curProgress = sb_voice.progress * 100 / sb_voice.max
+        when {
+            curProgress > 66 -> {
+                iv_volume.setImageResource(R.drawable.ic_volume_2)
+            }
+            curProgress > 33 -> {
+                iv_volume.setImageResource(R.drawable.ic_volume_1)
+            }
+            curProgress  > 0 -> {
+                iv_volume.setImageResource(R.drawable.ic_volume)
+            }
+            else -> {
+                iv_volume.setImageResource(R.drawable.ic_volume_mute)
+            }
+        }
+        sb_voice.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val p = progress * 100 / sb_voice.max
+                when {
+                    p > 66 -> {
+                        iv_volume.setImageResource(R.drawable.ic_volume_2)
+                    }
+                    p > 33 -> {
+                        iv_volume.setImageResource(R.drawable.ic_volume_1)
+                    }
+                    p  > 0 -> {
+                        iv_volume.setImageResource(R.drawable.ic_volume)
+                    }
+                    else -> {
+                        iv_volume.setImageResource(R.drawable.ic_volume_mute)
+                    }
+                }
+                manager.setStreamVolume(
+                    AudioManager.STREAM_VOICE_CALL,
+                    progress,
+                    AudioManager.FLAG_PLAY_SOUND
+                )
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
+
+        })
+
+        btn_call_host.visibility =
+            if (App.deviceType == DeviceType.BED && callNumber != App.hostNumber) View.VISIBLE else View.GONE
+        btn_call_host.setOnClickListener {
+            callViewModel.transfer(App.hostNumber, 0)
+        }
 
     }
 

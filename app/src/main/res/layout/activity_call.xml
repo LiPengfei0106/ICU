@@ -78,6 +78,23 @@
         >
 
         <TextView
+            android:id="@+id/btn_call_host"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="36pt"
+            android:padding="36pt"
+            android:layout_marginBottom="36pt"
+            android:background="@drawable/shape_rectangle_red_radius60"
+            android:text="呼叫护士"
+
+            app:layout_constraintBottom_toTopOf="@id/tv_call_time"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+
+        <TextView
             android:id="@+id/tv_call_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -85,7 +102,31 @@
             android:textSize="24pt"
             android:padding="24pt"
 
-            app:layout_constraintBottom_toTopOf="@id/ll_action"/>
+            app:layout_constraintBottom_toTopOf="@id/sb_voice"/>
+
+        <ImageView
+            android:id="@+id/iv_volume"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_volume"
+            android:paddingStart="36pt"
+            android:paddingTop="36pt"
+            android:paddingBottom="36pt"
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/ll_action"
+            />
+
+        <SeekBar
+            android:id="@+id/sb_voice"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="36pt"
+
+            app:layout_constraintStart_toEndOf="@+id/iv_volume"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/iv_volume"
+            app:layout_constraintTop_toTopOf="@id/iv_volume"/>
 
         <LinearLayout
             android:id="@+id/ll_action"
@@ -100,6 +141,30 @@
             app:layout_constraintEnd_toEndOf="parent">
 
             <LinearLayout
+                android:id="@+id/btn_mic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="12pt">
+
+                <ImageView
+                    android:id="@+id/iv_mic"
+                    android:layout_width="96pt"
+                    android:layout_height="96pt"
+                    android:src="@drawable/ic_mic"/>
+
+                <TextView
+                    android:id="@+id/tv_mic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="24pt"
+                    android:layout_marginTop="12pt"
+                    android:text="静音"/>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/btn_transfer"
                 android:visibility="gone"
                 android:layout_width="wrap_content"
@@ -109,8 +174,8 @@
                 android:padding="12pt">
 
                 <ImageView
-                    android:layout_width="100pt"
-                    android:layout_height="100pt"
+                    android:layout_width="96pt"
+                    android:layout_height="96pt"
                     android:src="@drawable/ic_transfer"/>
 
                 <TextView
@@ -131,8 +196,8 @@
                 android:padding="12pt">
 
                 <ImageView
-                    android:layout_width="100pt"
-                    android:layout_height="100pt"
+                    android:layout_width="96pt"
+                    android:layout_height="96pt"
                     android:src="@drawable/ic_hangup"/>
 
                 <TextView
@@ -154,8 +219,8 @@
                 android:padding="12pt">
 
                 <ImageView
-                    android:layout_width="100pt"
-                    android:layout_height="100pt"
+                    android:layout_width="96pt"
+                    android:layout_height="96pt"
                     android:src="@drawable/ic_camera"/>
 
                 <TextView
@@ -167,9 +232,31 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/btn_speaker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="12pt">
+
+                <ImageView
+                    android:id="@+id/iv_speaker"
+                    android:layout_width="96pt"
+                    android:layout_height="96pt"
+                    android:src="@drawable/ic_speaker"/>
+
+                <TextView
+                    android:id="@+id/tv_speaker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="24pt"
+                    android:layout_marginTop="12pt"
+                    android:text="扬声器"/>
+
+            </LinearLayout>
+
         </LinearLayout>
-
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

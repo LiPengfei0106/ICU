@@ -61,6 +61,8 @@ class App : Application(), VoIPClient.VoIPListener {
 
         Timber.plant(LogTree())
 
+        TTSOutputManager.instance.init()
+
         settingSP = PreferenceManager.getDefaultSharedPreferences(instance)
         deviceType = BuildConfig.FLAVOR
         Timber.i("DeviceType: $deviceType")
