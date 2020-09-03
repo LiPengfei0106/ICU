@@ -3,6 +3,7 @@ package cn.cleartv.icu.repository
 import androidx.lifecycle.MutableLiveData
 import cn.cleartv.icu.App
 import cn.cleartv.icu.DeviceStatus
+import cn.cleartv.icu.TTSOutputManager
 import cn.cleartv.icu.db.entity.Device
 import cn.cleartv.icu.utils.JsonUtils
 import cn.cleartv.voip.VoIPClient
@@ -34,7 +35,7 @@ object CallRepository : VoIPClient.VoIPCallListener,
 
     var isTransfer = false
 
-    fun resetData(isTransfer: Boolean) {
+    fun resetData(isTransfer: Boolean = false) {
         this.isTransfer = isTransfer
         tipData.postValue(null)
         textData.postValue(null)
@@ -45,12 +46,12 @@ object CallRepository : VoIPClient.VoIPCallListener,
 
     override fun onCallConnected(member: VoIPMember) {
         Timber.d("onCallConnected: \n ${member.toJsonString()}")
-        if (DeviceStatus.CALLING == App.deviceInfo.status){
+        if (DeviceStatus.CALLING == App.deviceInfo.status) {
             App.deviceInfo.status = DeviceStatus.IN_CALL_CALLER
         }
         App.deviceInfo.lastOnLineTime = System.currentTimeMillis()
         VoIPClient.sendMessage(
-            App.hostNumber,
+            App.hostDevice.number,
             "heartbeat",
             JsonUtils.toJson(App.deviceInfo)
         )
@@ -84,6 +85,7 @@ object CallRepository : VoIPClient.VoIPCallListener,
         } else {
             exitData.postValue("对方已挂断")
         }
+        resetData(isTransfer)
     }
 
     override fun onMgtCancel(mangerNum: String, message: String) {
@@ -95,12 +97,24 @@ object CallRepository : VoIPClient.VoIPCallListener,
     override fun onMgtInterCut(mangerNum: String, message: String) {
         // 管理员开始插话
         Timber.d("onMgtInterCut: \n mangerNum-$mangerNum; message-$message")
-        tipData.postValue(message)
+        when (message) {
+            "all" -> {
+                tipData.postValue("护士站插话")
+            }
+            App.deviceInfo.number -> {
+                tipData.postValue("护士站插话")
+            }
+            else -> {
+                remoteInfoData.value?.mediaStream?.audioTracks?.firstOrNull()?.setEnabled(false)
+                TTSOutputManager.instance.speak("护士正在与对方沟通中，请稍候")
+            }
+        }
     }
 
     override fun onMgtInterCutStop() {
         // 管理员插话结束
         Timber.d("onMgtInterCutStop")
+        remoteInfoData.value?.mediaStream?.audioTracks?.firstOrNull()?.setEnabled(true)
         tipData.postValue("插话结束")
     }
 
@@ -118,9 +132,25 @@ object CallRepository : VoIPClient.VoIPCallListener,
                 member.userNum,
                 name = member.userNum
             )
-            callDevices.value?.let { devices ->
-                devices[device.number] = device
-                callDevices.postValue(devices)
+            if (device.status == DeviceStatus.MONITOR) {
+                if (App.deviceInfo.status == DeviceStatus.IDLE) {
+                    Timber.e("监听来电，接听")
+                    VoIPClient.acceptCall(
+                        member.userNum,
+                        true,
+                        true,
+                        JsonUtils.toJson(App.deviceInfo)
+                    )
+                } else {
+                    Timber.e("监听来电，忙，拒绝")
+                    VoIPClient.hangupCall(member.userNum, App.deviceInfo.number)
+                }
+            } else {
+                Timber.e("普通来电")
+                callDevices.value?.let { devices ->
+                    devices[device.number] = device
+                    callDevices.postValue(devices)
+                }
             }
         }
 

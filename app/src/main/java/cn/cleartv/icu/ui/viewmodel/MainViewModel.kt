@@ -44,7 +44,7 @@ class MainViewModel : BaseViewModel() {
             while (true) {
                 App.deviceInfo.lastOnLineTime = System.currentTimeMillis()
                 VoIPClient.sendMessage(
-                    App.hostNumber,
+                    App.hostDevice.number,
                     "heartbeat",
                     JsonUtils.toJson(App.deviceInfo)
                 )

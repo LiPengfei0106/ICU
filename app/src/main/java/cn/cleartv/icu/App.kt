@@ -14,6 +14,7 @@ import cn.cleartv.icu.utils.JsonUtils
 import cn.cleartv.icu.utils.LogTree
 import cn.cleartv.icu.utils.TimeUtils
 import cn.cleartv.voip.VoIPClient
+import cn.cleartv.voip.VoIPParams
 import kotlinx.coroutines.delay
 import org.json.JSONObject
 import timber.log.Timber
@@ -36,9 +37,11 @@ class App : Application(), VoIPClient.VoIPListener {
 
         @DeviceType
         lateinit var deviceType: String
-        lateinit var hostNumber: String
+        lateinit var hostDevice: Device
         lateinit var deviceInfo: Device
         var adapterWidth: Int = 1920
+
+        var isRecord = false
 
         lateinit var settingSP: SharedPreferences
 
@@ -68,10 +71,11 @@ class App : Application(), VoIPClient.VoIPListener {
         Timber.i("DeviceType: $deviceType")
 
         adapterWidth = (settingSP.getString("adapter_width", null)?:"1920").toInt()
+        isRecord = settingSP.getBoolean("is_record",false)
 
         val username = settingSP.getString("username", null)?:""
         val password = settingSP.getString("password", null)?:""
-        hostNumber = settingSP.getString("host_number", null)?:""
+        hostDevice = Device(settingSP.getString("host_number", null)?:"","护士站主机")
         deviceInfo = Device(
             username,
             username,
@@ -79,6 +83,7 @@ class App : Application(), VoIPClient.VoIPListener {
         )
         VoIPClient.hostUrl =
             settingSP.getString("host_url", null) ?: resources.getString(R.string.host_url)
+        VoIPClient.voIPParams = VoIPParams.Builder().videoFormat(720,540,15).build()
         VoIPClient.init(this, username, password, BuildConfig.DEBUG)
 
 //        when (deviceType) {

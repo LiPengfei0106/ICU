@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:layout_width="720pt"
+        android:gravity="center"
+        android:padding="24pt"
+        android:background="@drawable/shape_rectangle_white_radius60"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="插话选择"
+            android:textSize="48pt"
+            android:padding="24pt"
+            android:textColor="@color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/btn_first"
+            android:background="@drawable/shape_rectangle_blue_radius60"
+            android:layout_width="200pt"
+            android:gravity="center"
+            android:textSize="36pt"
+            android:padding="18pt"
+            android:layout_margin="18pt"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/btn_second"
+            android:background="@drawable/shape_rectangle_blue_radius60"
+            android:layout_width="200pt"
+            android:gravity="center"
+            android:textSize="36pt"
+            android:padding="18pt"
+            android:layout_margin="18pt"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/btn_all"
+            android:background="@drawable/shape_rectangle_blue_radius60"
+            android:layout_width="200pt"
+            android:gravity="center"
+            android:textSize="36pt"
+            android:padding="18pt"
+            android:layout_margin="18pt"
+            android:layout_height="wrap_content"
+            android:text="全部"/>
+
+    </LinearLayout>
+
+</FrameLayout>

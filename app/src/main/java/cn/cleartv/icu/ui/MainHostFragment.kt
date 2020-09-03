@@ -47,19 +47,28 @@ class MainHostFragment : BaseFragment() {
                         when(view.id){
                             R.id.tv_monitor -> {
                                 if(device.status == DeviceStatus.IN_CALL_CALLER || device.status == DeviceStatus.IN_CALL_CALLEE){
+                                    Intent(requireContext(),MonitorCallActivity::class.java).apply {
+                                        putExtra("device",JsonUtils.toJson(device))
+                                        startActivity(this)
+                                    }
+                                }else if(device.status == DeviceStatus.IDLE){
                                     Intent(requireContext(),MonitorActivity::class.java).apply {
                                         putExtra("device",JsonUtils.toJson(device))
                                         startActivity(this)
                                     }
+                                }else if(device.status == DeviceStatus.CALLING){
+                                    toast("设备正在呼叫中")
+                                }else if(device.status == DeviceStatus.DISCONNECT){
+                                    toast("设备不在线")
                                 }else{
-                                    toast("该设备未在通话中")
+                                    toast("设备忙")
                                 }
                             }
                             R.id.tv_call -> {
                                 when(device.status){
                                     DeviceStatus.IDLE -> {
                                         Intent(requireContext(),CallActivity::class.java).apply {
-                                            putExtra("number",device.number)
+                                            putExtra("device",JsonUtils.toJson(device))
                                             putExtra("amCaller",true)
                                             startActivity(this)
                                         }
@@ -85,7 +94,7 @@ class MainHostFragment : BaseFragment() {
                         when(device.status){
                             DeviceStatus.IDLE -> {
                                 Intent(requireContext(),CallActivity::class.java).apply {
-                                    putExtra("number",device.number)
+                                    putExtra("device",JsonUtils.toJson(device))
                                     putExtra("amCaller",true)
                                     startActivity(this)
                                 }
@@ -109,7 +118,7 @@ class MainHostFragment : BaseFragment() {
                         when(device.status){
                             DeviceStatus.IDLE -> {
                                 Intent(requireContext(),CallActivity::class.java).apply {
-                                    putExtra("number",device.number)
+                                    putExtra("device",JsonUtils.toJson(device))
                                     putExtra("amCaller",true)
                                     startActivity(this)
                                 }

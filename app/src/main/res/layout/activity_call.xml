@@ -42,7 +42,7 @@
         android:textSize="36pt"
 
         app:layout_constraintTop_toBottomOf="@id/ll_top"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="@id/video_remote"/>
 
     <cn.cleartv.voip.VoIPSurfaceView
         android:id="@+id/video_remote"

@@ -78,7 +78,7 @@ class SettingsActivity : BaseActivity() {
             }
 
             findPreference<EditTextPreference>("host_number")?.setOnPreferenceChangeListener { preference, newValue ->
-                App.hostNumber = newValue.toString()
+                App.hostDevice = Device(newValue.toString(),"护士站主机")
                 return@setOnPreferenceChangeListener true
             }
 

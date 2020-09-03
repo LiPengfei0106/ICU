@@ -23,6 +23,8 @@ import timber.log.Timber
  */
 class CallViewModel : BaseViewModel() {
 
+    var callDevice: Device? = null
+
     val localInfoData: LiveData<VoIPMember?> = CallRepository.localInfoData
     val remoteInfoData: LiveData<VoIPMember?> = CallRepository.remoteInfoData
     val exitData: LiveData<String?> = CallRepository.exitData
@@ -44,48 +46,50 @@ class CallViewModel : BaseViewModel() {
         App.deviceInfo.status = DeviceStatus.IDLE
         App.deviceInfo.lastOnLineTime = System.currentTimeMillis()
         VoIPClient.sendMessage(
-            App.hostNumber,
+            App.hostDevice.number,
             "heartbeat",
             JsonUtils.toJson(App.deviceInfo)
         )
     }
 
-    fun startCall(number: String, amCaller: Boolean, duration: Int = 0) {
+    fun startCall(device: Device, amCaller: Boolean, duration: Int = 0) {
         CallRepository.callDevices.value?.let {
-            if(it.remove(number) != null){
+            if(it.remove(device.number) != null){
                 CallRepository.callDevices.postValue(it)
             }
         }
         CallRepository.resetData(false)
+        VoIPClient.hangupCall()
+        callDevice = device
         callDuration = duration
         if (amCaller) {
             Timber.d("startCall")
-            VoIPClient.startCall(number, true, true, JsonUtils.toJson(App.deviceInfo))
-            App.deviceInfo.callNumber = number
+            VoIPClient.startCall(device.number, true, true, JsonUtils.toJson(App.deviceInfo),App.isRecord)
+            App.deviceInfo.callNumber = device.number
             App.deviceInfo.status = DeviceStatus.CALLING
             App.deviceInfo.lastOnLineTime = System.currentTimeMillis()
             VoIPClient.sendMessage(
-                App.hostNumber,
+                App.hostDevice.number,
                 "heartbeat",
                 JsonUtils.toJson(App.deviceInfo)
             )
         } else {
             Timber.d("acceptCall")
-            App.deviceInfo.callNumber = number
+            App.deviceInfo.callNumber = device.number
             App.deviceInfo.status = DeviceStatus.IN_CALL_CALLEE
             App.deviceInfo.lastOnLineTime = System.currentTimeMillis()
             VoIPClient.sendMessage(
-                App.hostNumber,
+                App.hostDevice.number,
                 "heartbeat",
                 JsonUtils.toJson(App.deviceInfo)
             )
-            VoIPClient.acceptCall(number, true, true, JsonUtils.toJson(App.deviceInfo))
+            VoIPClient.acceptCall(device.number, true, true, JsonUtils.toJson(App.deviceInfo))
         }
     }
 
-    fun transfer(number: String, duration: Int) {
+    fun transfer(device: Device, duration: Int) {
         hangup(true)
-        startCall(number,true,duration)
+        startCall(device,true,duration)
     }
 
 }

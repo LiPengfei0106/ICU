@@ -6,9 +6,11 @@ import androidx.lifecycle.Observer
 import cn.cleartv.icu.BaseDialogFragment
 import cn.cleartv.icu.R
 import cn.cleartv.icu.TTSOutputManager
+import cn.cleartv.icu.db.entity.Device
 import cn.cleartv.icu.ui.adapter.DeviceAdapter
 import cn.cleartv.icu.ui.viewmodel.CallViewModel
 import cn.cleartv.icu.ui.viewmodel.MainViewModel
+import cn.cleartv.icu.utils.JsonUtils
 import kotlinx.android.synthetic.main.fragment_call_list.*
 import kotlinx.coroutines.delay
 import timber.log.Timber
@@ -34,11 +36,14 @@ class CallListFragment : BaseDialogFragment() {
     override fun afterInflateView() {
         isCancelable = false
         rv_devices.adapter = DeviceAdapter().apply {
+
             setOnItemClickListener { adapter, view, position ->
-                Intent(requireContext(),CallActivity::class.java).apply {
-                    putExtra("number",(adapter as DeviceAdapter).getItem(position).number)
-                    putExtra("amCaller",false)
-                    startActivity(this)
+                (adapter as DeviceAdapter).let {
+                    Intent(requireContext(),CallActivity::class.java).apply {
+                        putExtra("device", JsonUtils.toJson(it.getItem(position)))
+                        putExtra("amCaller",false)
+                        startActivity(this)
+                    }
                 }
             }
         }

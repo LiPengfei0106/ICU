@@ -11,6 +11,7 @@ import cn.cleartv.icu.db.entity.Device
 import cn.cleartv.icu.ui.adapter.DeviceAdapter
 import cn.cleartv.icu.ui.viewmodel.CallViewModel
 import cn.cleartv.icu.ui.viewmodel.MainViewModel
+import cn.cleartv.icu.utils.JsonUtils
 import cn.cleartv.icu.utils.PermissionUtils
 import kotlinx.android.synthetic.main.fragment_bed_main.*
 
@@ -38,7 +39,7 @@ class MainBedFragment : BaseFragment() {
                 arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO),
                 Runnable {
                     Intent(requireContext(),CallActivity::class.java).apply {
-                        putExtra("number",App.hostNumber)
+                        putExtra("device", JsonUtils.toJson(App.hostDevice))
                         putExtra("amCaller",true)
                         startActivity(this)
                     }
@@ -49,7 +50,7 @@ class MainBedFragment : BaseFragment() {
         mainViewModel.callDevices.observe(viewLifecycleOwner, Observer {
             it.keys.firstOrNull()?.let {key->
                 Intent(requireContext(),CallActivity::class.java).apply {
-                    putExtra("number",it[key]?.number)
+                    putExtra("device", JsonUtils.toJson(it[key]?:Device(key)))
                     putExtra("amCaller",false)
                     startActivity(this)
                 }

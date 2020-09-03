@@ -38,6 +38,11 @@
             app:defaultValue="1920"
             app:useSimpleSummaryProvider="true" />
 
+        <SwitchPreference
+            app:key="is_record"
+            app:title="开启录制"
+            app:defaultValue="false"/>
+
         <Preference
             app:key="system_setting"
             app:title="系统设置"/>

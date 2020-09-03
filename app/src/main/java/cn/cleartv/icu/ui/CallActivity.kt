@@ -11,6 +11,7 @@ import cn.cleartv.icu.BaseActivity
 import cn.cleartv.icu.DeviceType
 import cn.cleartv.icu.R
 import cn.cleartv.icu.db.entity.Device
+import cn.cleartv.icu.repository.CallRepository
 import cn.cleartv.icu.repository.DeviceRepository
 import cn.cleartv.icu.ui.viewmodel.CallViewModel
 import cn.cleartv.icu.utils.JsonUtils
@@ -43,9 +44,9 @@ class CallActivity : BaseActivity() {
         App.dateTime.observe(this, Observer {
             tv_date.text = it
         })
-        val callNumber = intent.getStringExtra("number")
+        val callDevice = JsonUtils.fromJson(intent.getStringExtra("device")?:"", Device::class.java)
         val amCaller = intent.getBooleanExtra("amCaller", false)
-        if (callNumber.isNullOrBlank()) {
+        if (callDevice == null) {
             toast("缺少参数")
             finish()
         }
@@ -126,8 +127,8 @@ class CallActivity : BaseActivity() {
             } else {
                 callViewModel.launchUI {
                     btn_call_host.visibility =
-                        if (App.deviceType == DeviceType.BED && it.userNum != App.hostNumber) View.VISIBLE else View.GONE
-                    tv_name.text =
+                        if (App.deviceType == DeviceType.BED && it.userNum != App.hostDevice.number) View.VISIBLE else View.GONE
+                    tv_name.text = callViewModel.callDevice?.name?:
                         withContext(Dispatchers.IO) { DeviceRepository.getDevice(it.userNum)?.name }
                 }
             }
@@ -143,7 +144,7 @@ class CallActivity : BaseActivity() {
                             device?.let {
                                 // 更新界面
                                 tv_name.text = "正在转接中..."
-                                callViewModel.transfer(device.number, data.optInt("duration", 0))
+                                callViewModel.transfer(device, data.optInt("duration", 0))
                             }
                         }
                         else -> {
@@ -156,7 +157,8 @@ class CallActivity : BaseActivity() {
             }
 
         })
-        callViewModel.startCall(callNumber!!, amCaller)
+        callViewModel.startCall(callDevice!!, amCaller)
+        tv_name.text = "正在呼叫${callDevice.name}..."
 
         val manager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         manager.mode = AudioManager.MODE_IN_COMMUNICATION
@@ -249,9 +251,9 @@ class CallActivity : BaseActivity() {
         })
 
         btn_call_host.visibility =
-            if (App.deviceType == DeviceType.BED && callNumber != App.hostNumber) View.VISIBLE else View.GONE
+            if (App.deviceType == DeviceType.BED && callViewModel.callDevice?.number != App.hostDevice.number) View.VISIBLE else View.GONE
         btn_call_host.setOnClickListener {
-            callViewModel.transfer(App.hostNumber, 0)
+            callViewModel.transfer(App.hostDevice, 0)
         }
 
     }

@@ -29,6 +29,7 @@
         </activity>
         <activity android:name=".ui.CallActivity" />
         <activity android:name=".ui.MonitorActivity" />
+        <activity android:name=".ui.MonitorCallActivity" />
     </application>
 
 </manifest>
