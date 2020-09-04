@@ -134,7 +134,6 @@ object CallRepository : VoIPClient.VoIPCallListener,
             )
             if (device.status == DeviceStatus.MONITOR) {
                 if (App.deviceInfo.status == DeviceStatus.IDLE) {
-                    Timber.e("监听来电，接听")
                     VoIPClient.acceptCall(
                         member.userNum,
                         true,
@@ -142,11 +141,9 @@ object CallRepository : VoIPClient.VoIPCallListener,
                         JsonUtils.toJson(App.deviceInfo)
                     )
                 } else {
-                    Timber.e("监听来电，忙，拒绝")
                     VoIPClient.hangupCall(member.userNum, App.deviceInfo.number)
                 }
             } else {
-                Timber.e("普通来电")
                 callDevices.value?.let { devices ->
                     devices[device.number] = device
                     callDevices.postValue(devices)

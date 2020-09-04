@@ -5,10 +5,12 @@ import android.os.Bundle
 import android.os.Process
 import android.provider.Settings
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
 import cn.cleartv.icu.App
 import cn.cleartv.icu.BaseActivity
 import cn.cleartv.icu.BuildConfig
@@ -104,6 +106,12 @@ class SettingsActivity : BaseActivity() {
                         ?: resources.getString(R.string.host_url)
                 VoIPClient.init(App.instance, username, password, BuildConfig.DEBUG)
                 return@setOnPreferenceClickListener true
+            }
+
+            findPreference<SwitchPreference>("is_record")?.setOnPreferenceChangeListener { preference, newValue ->
+                App.isRecord = newValue as Boolean
+                Utils.showToast(if(App.isRecord) "开启录制" else "关闭录制")
+                return@setOnPreferenceChangeListener true
             }
 
         }

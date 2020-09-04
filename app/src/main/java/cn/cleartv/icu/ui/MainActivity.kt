@@ -7,11 +7,14 @@ import cn.cleartv.icu.BaseActivity
 import cn.cleartv.icu.DeviceType
 import cn.cleartv.icu.R
 import cn.cleartv.icu.ui.viewmodel.MainViewModel
+import cn.cleartv.icu.utils.JsonUtils
 import cn.cleartv.icu.utils.ShellUtil
+import cn.cleartv.voip.VoIPClient
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.util.*
 
 class MainActivity : BaseActivity() {
 
@@ -29,6 +32,10 @@ class MainActivity : BaseActivity() {
                     true,
                     false
                 ).toString())
+
+//                VoIPClient.getCallRecordList(Date(0),Date(),"10001000",null).forEach {
+//                    Timber.i(JsonUtils.toJson(it))
+//                }
             }
         }
         App.dateTime.observe(this, Observer {

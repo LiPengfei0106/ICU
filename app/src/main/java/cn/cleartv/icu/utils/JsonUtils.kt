@@ -1,8 +1,12 @@
 package cn.cleartv.icu.utils
 
-import com.squareup.moshi.Moshi
+import cn.cleartv.voip.entity.CallRecord
+import com.squareup.moshi.*
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import org.jetbrains.annotations.NotNull
+import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
+import java.util.*
+
 
 /**
  * <pre>
@@ -21,16 +25,16 @@ object JsonUtils {
             .build()
     }
 
-    fun <T> fromJson(json: String, cls: Class<T>): T?{
+    fun <T> fromJson(json: String, cls: Class<T>): T? {
         try {
             return moshi.adapter(cls).fromJson(json)
-        }catch (e: Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
         return null
     }
 
-    fun <T : Any> toJson(obj: T): String{
+    fun <T : Any> toJson(obj: T): String {
         return moshi.adapter<T>(obj::class.java).toJson(obj)
     }
 
