@@ -2,13 +2,19 @@ package cn.cleartv.icu.repository
 
 import androidx.lifecycle.MutableLiveData
 import cn.cleartv.icu.App
+import cn.cleartv.icu.CallStatus
 import cn.cleartv.icu.DeviceStatus
 import cn.cleartv.icu.TTSOutputManager
+import cn.cleartv.icu.db.ICUDatabase
+import cn.cleartv.icu.db.entity.Call
 import cn.cleartv.icu.db.entity.Device
 import cn.cleartv.icu.utils.JsonUtils
 import cn.cleartv.voip.VoIPClient
+import cn.cleartv.voip.annotation.CallRecordStatus
 import cn.cleartv.voip.entity.VoIPMember
 import timber.log.Timber
+import java.util.*
+import kotlin.collections.HashMap
 
 /**
  * <pre>
@@ -35,6 +41,10 @@ object CallRepository : VoIPClient.VoIPCallListener,
 
     var isTransfer = false
 
+    val callDao = ICUDatabase.instance.callDao()
+
+    val callRecordList = callDao.getCallList()
+
     fun resetData(isTransfer: Boolean = false) {
         this.isTransfer = isTransfer
         tipData.postValue(null)
@@ -57,18 +67,28 @@ object CallRepository : VoIPClient.VoIPCallListener,
         )
         remoteInfoData.postValue(member)
         isTransfer = false
+
+        callDao.updateCallConnect(member.userNum)
     }
 
     override fun onCallDisconnected(msg: String) {
         // 1v1通话异常断开
         Timber.d("onCallDisconnected: \n $msg")
         exitData.postValue(msg)
+
+        remoteInfoData.value?.let {
+            callDao.updateCallFinished(it.userNum, msg)
+        }
     }
 
     override fun onCallRefuse(reason: String) {
         // 对方拒绝接受通话
         Timber.d("onCallRefuse: \n $reason")
         exitData.postValue(reason)
+
+        remoteInfoData.value?.let {
+            callDao.updateCallFinished(it.userNum, reason)
+        }
     }
 
     override fun onCallStart(myInfo: VoIPMember) {
@@ -77,13 +97,13 @@ object CallRepository : VoIPClient.VoIPCallListener,
         localInfoData.postValue(myInfo)
     }
 
-    override fun onHangup() {
+    override fun onHangup(message: String) {
         // 当前通话挂断
         Timber.d("onHangup")
         if (isTransfer) {
             Timber.d("isTransfer")
         } else {
-            exitData.postValue("对方已挂断")
+            exitData.postValue(if (message.isNotBlank()) message else "对方已挂断")
         }
         resetData(isTransfer)
     }
@@ -91,6 +111,9 @@ object CallRepository : VoIPClient.VoIPCallListener,
     override fun onMgtCancel(mangerNum: String, message: String) {
         // 管理员强拆当前通话
         Timber.d("onMgtCancel: \n mangerNum-$mangerNum; message-$message")
+        remoteInfoData.value?.let {
+            callDao.updateCallFinished(it.userNum, message)
+        }
         exitData.postValue(message)
     }
 
@@ -132,6 +155,9 @@ object CallRepository : VoIPClient.VoIPCallListener,
                 member.userNum,
                 name = member.userNum
             )
+            DeviceRepository.addDevice(device)
+            newCall(device, false)
+
             if (device.status == DeviceStatus.MONITOR) {
                 if (App.deviceInfo.status == DeviceStatus.IDLE) {
                     VoIPClient.acceptCall(
@@ -141,7 +167,8 @@ object CallRepository : VoIPClient.VoIPCallListener,
                         JsonUtils.toJson(App.deviceInfo)
                     )
                 } else {
-                    VoIPClient.hangupCall(member.userNum, App.deviceInfo.number)
+                    VoIPClient.hangupCall(member.userNum, App.deviceInfo.number, "对方正忙")
+                    callDao.updateCallFinished(member.userNum, "未接听")
                 }
             } else {
                 callDevices.value?.let { devices ->
@@ -153,9 +180,12 @@ object CallRepository : VoIPClient.VoIPCallListener,
 
     }
 
-    override fun onHangup(memberNumber: String) {
+    override fun onHangup(memberNumber: String, message: String) {
         // 收到挂断消息
-        Timber.d("onHangup: \n $memberNumber")
+        Timber.d("onHangup: \n $memberNumber, \n $message")
+
+        callDao.updateCallFinished(memberNumber, message)
+
         callDevices.value?.let {
             if (it.remove(memberNumber) != null) {
                 callDevices.postValue(it)
@@ -163,4 +193,42 @@ object CallRepository : VoIPClient.VoIPCallListener,
         }
     }
 
+    fun newCall(device: Device, amCaller: Boolean) {
+        callDao.insert(
+            Call(
+                callNumber = device.callNumber,
+                amCaller = amCaller,
+                callStatus = CallStatus.RINGING
+            )
+        )
+    }
+
+    suspend fun updateCallRecord(call: Call): Call {
+        // 查询这个通话的录像地址并更新，成功的或者没有开启录制的就不查了
+        if (call.callStatus != CallRecordStatus.COMPLETE && call.recordStatus != "NONE") {
+            val from = if (call.amCaller) App.deviceInfo.number else call.callNumber
+            val to = if (!call.amCaller) App.deviceInfo.number else call.callNumber
+            VoIPClient.getCallRecordList(
+                from,
+                to,
+                Date(call.callTime),
+                if (call.endTime > 0) Date(call.endTime) else Date()
+            ).firstOrNull().let {
+                when (it?.status) {
+                    CallRecordStatus.COMPLETE -> {
+                        call.recordStatus = it.status
+                        call.recordUrl = it.downUri
+                    }
+                    null -> {
+                        call.recordStatus = "NONE"
+                    }
+                    else -> {
+                        call.recordStatus = it.status
+                    }
+                }
+                callDao.insert(call)
+            }
+        }
+        return call
+    }
 }

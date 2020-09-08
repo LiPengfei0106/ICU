@@ -9,7 +9,9 @@ import cn.cleartv.icu.App
 import cn.cleartv.icu.BuildConfig
 import cn.cleartv.icu.DeviceStatus
 import cn.cleartv.icu.DeviceType
+import cn.cleartv.icu.db.dao.CallDao
 import cn.cleartv.icu.db.dao.DeviceDao
+import cn.cleartv.icu.db.entity.Call
 import cn.cleartv.icu.db.entity.Device
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,14 +27,17 @@ import kotlinx.coroutines.launch
  *     version: 1.0
  * </pre>
  */
-@Database(entities = [Device::class],version = 3, exportSchema = false)
+@Database(entities = [Device::class,Call::class],version = 4, exportSchema = false)
 abstract class ICUDatabase : RoomDatabase() {
 
     abstract fun deviceDao(): DeviceDao
 
+    abstract fun callDao(): CallDao
+
     companion object {
         private const val DB_NAME = "ICU.DB"
         internal const val TABLE_DEVICE = "devices_table"
+        internal const val TABLE_CALL = "call_table"
         val instance: ICUDatabase by lazy {
             Room.databaseBuilder(App.instance,ICUDatabase::class.java,DB_NAME)
                 .addCallback(object : RoomDatabase.Callback(){
@@ -40,19 +45,21 @@ abstract class ICUDatabase : RoomDatabase() {
                         // init
                         if(BuildConfig.DEBUG){
                             CoroutineScope(Dispatchers.IO).launch{
-                                instance.deviceDao().insert(Device("10001001",name = "一号床",type = DeviceType.BED))
-                                instance.deviceDao().insert(Device("10001002",name = "二号床",type = DeviceType.BED))
-                                instance.deviceDao().insert(Device("10001003",name = "三号床",type = DeviceType.BED))
-                                instance.deviceDao().insert(Device("10001004",name = "四号床",type = DeviceType.BED))
-                                instance.deviceDao().insert(Device("10001005",name = "五号床",type = DeviceType.BED))
-                                instance.deviceDao().insert(Device("10001006",name = "六号床",type = DeviceType.BED))
-                                instance.deviceDao().insert(Device("10001007",name = "七号床",type = DeviceType.BED))
-                                instance.deviceDao().insert(Device("10001008",name = "八号床",type = DeviceType.BED))
-                                instance.deviceDao().insert(Device("10001009",name = "九号床",type = DeviceType.BED))
-                                instance.deviceDao().insert(Device("10001010",name = "十号床",type = DeviceType.BED))
-                                instance.deviceDao().insert(Device("10002001",name = "探视机一",type = DeviceType.GUEST))
-                                instance.deviceDao().insert(Device("10002002",name = "探视机二",type = DeviceType.GUEST))
-                                instance.deviceDao().insert(Device("10003001",name = "门禁机",type = DeviceType.DOOR))
+                                instance.deviceDao().apply {
+                                    insert(Device("10001001",name = "一号床",type = DeviceType.BED))
+                                    insert(Device("10001002",name = "二号床",type = DeviceType.BED))
+                                    insert(Device("10001003",name = "三号床",type = DeviceType.BED))
+                                    insert(Device("10001004",name = "四号床",type = DeviceType.BED))
+                                    insert(Device("10001005",name = "五号床",type = DeviceType.BED))
+                                    insert(Device("10001006",name = "六号床",type = DeviceType.BED))
+                                    insert(Device("10001007",name = "七号床",type = DeviceType.BED))
+                                    insert(Device("10001008",name = "八号床",type = DeviceType.BED))
+                                    insert(Device("10001009",name = "九号床",type = DeviceType.BED))
+                                    insert(Device("10001010",name = "十号床",type = DeviceType.BED))
+                                    insert(Device("10002001",name = "探视机一",type = DeviceType.GUEST))
+                                    insert(Device("10002002",name = "探视机二",type = DeviceType.GUEST))
+                                    insert(Device("10003001",name = "门禁机",type = DeviceType.DOOR))
+                                }
                             }
                         }
                     }

@@ -1,5 +1,6 @@
 package cn.cleartv.icu.ui
 
+import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import cn.cleartv.icu.App
@@ -47,18 +48,28 @@ class MainActivity : BaseActivity() {
         }
 
         when (App.deviceType) {
-            DeviceType.HOST -> supportFragmentManager.beginTransaction()
-                .add(R.id.fl_content, MainHostFragment(), MainHostFragment::class.java.simpleName)
-                .addToBackStack(MainHostFragment::class.java.simpleName)
-                .commitAllowingStateLoss()
-            DeviceType.BED -> supportFragmentManager.beginTransaction()
-                .add(R.id.fl_content, MainBedFragment(), MainBedFragment::class.java.simpleName)
-                .addToBackStack(MainBedFragment::class.java.simpleName)
-                .commitAllowingStateLoss()
-            DeviceType.GUEST -> supportFragmentManager.beginTransaction()
-                .add(R.id.fl_content, MainGuestFragment(), MainGuestFragment::class.java.simpleName)
-                .addToBackStack(MainGuestFragment::class.java.simpleName)
-                .commitAllowingStateLoss()
+            DeviceType.HOST -> {
+                btn_call_record.visibility = View.VISIBLE
+                btn_call_record.setOnClickListener {
+                    startActivity(CallRecordActivity::class.java)
+                }
+                supportFragmentManager.beginTransaction()
+                    .add(R.id.fl_content, MainHostFragment(), MainHostFragment::class.java.simpleName)
+                    .addToBackStack(MainHostFragment::class.java.simpleName)
+                    .commitAllowingStateLoss()
+            }
+            DeviceType.BED -> {
+                supportFragmentManager.beginTransaction()
+                    .add(R.id.fl_content, MainBedFragment(), MainBedFragment::class.java.simpleName)
+                    .addToBackStack(MainBedFragment::class.java.simpleName)
+                    .commitAllowingStateLoss()
+            }
+            DeviceType.GUEST -> {
+                supportFragmentManager.beginTransaction()
+                    .add(R.id.fl_content, MainGuestFragment(), MainGuestFragment::class.java.simpleName)
+                    .addToBackStack(MainGuestFragment::class.java.simpleName)
+                    .commitAllowingStateLoss()
+            }
         }
         if (App.deviceType != DeviceType.HOST) {
             viewModel.startHeartBeat()

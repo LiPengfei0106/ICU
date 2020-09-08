@@ -12,24 +12,28 @@
         android:label="${appName}"
         android:roundIcon="${appIcon}"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="LockedOrientationActivity">
         <activity
             android:name=".ui.SettingsActivity"
             android:theme="@style/SettingTheme">
 
         </activity>
         <activity android:name=".ui.MainActivity"
-            android:screenOrientation="sensorLandscape"
-            tools:ignore="LockedOrientationActivity">
+            android:screenOrientation="sensorLandscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.CallActivity" />
-        <activity android:name=".ui.MonitorActivity" />
-        <activity android:name=".ui.MonitorCallActivity" />
+        <activity android:name=".ui.CallActivity"
+            android:screenOrientation="sensorLandscape"/>
+        <activity android:name=".ui.MonitorActivity"
+            android:screenOrientation="sensorLandscape"/>
+        <activity android:name=".ui.MonitorCallActivity"
+            android:screenOrientation="sensorLandscape"/>
+        <activity android:name=".ui.CallRecordActivity" />
     </application>
 
 </manifest>

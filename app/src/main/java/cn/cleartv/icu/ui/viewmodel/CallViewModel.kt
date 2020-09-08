@@ -1,7 +1,6 @@
 package cn.cleartv.icu.ui.viewmodel
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import cn.cleartv.icu.App
 import cn.cleartv.icu.BaseViewModel
 import cn.cleartv.icu.DeviceStatus
@@ -64,26 +63,28 @@ class CallViewModel : BaseViewModel() {
         callDuration = duration
         if (amCaller) {
             Timber.d("startCall")
-            VoIPClient.startCall(device.number, true, true, JsonUtils.toJson(App.deviceInfo),App.isRecord)
             App.deviceInfo.callNumber = device.number
             App.deviceInfo.status = DeviceStatus.CALLING
             App.deviceInfo.lastOnLineTime = System.currentTimeMillis()
+            VoIPClient.startCall(device.number, true, true, JsonUtils.toJson(App.deviceInfo),App.isRecord)
             VoIPClient.sendMessage(
                 App.hostDevice.number,
                 "heartbeat",
                 JsonUtils.toJson(App.deviceInfo)
             )
+            // 发起通话在这里新增记录，接受通话和通话状态的修改在CallRepository中
+            CallRepository.newCall(App.deviceInfo,true)
         } else {
             Timber.d("acceptCall")
             App.deviceInfo.callNumber = device.number
             App.deviceInfo.status = DeviceStatus.IN_CALL_CALLEE
             App.deviceInfo.lastOnLineTime = System.currentTimeMillis()
+            VoIPClient.acceptCall(device.number, true, true, JsonUtils.toJson(App.deviceInfo))
             VoIPClient.sendMessage(
                 App.hostDevice.number,
                 "heartbeat",
                 JsonUtils.toJson(App.deviceInfo)
             )
-            VoIPClient.acceptCall(device.number, true, true, JsonUtils.toJson(App.deviceInfo))
         }
     }
 
