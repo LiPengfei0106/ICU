@@ -1,8 +1,11 @@
 package cn.cleartv.icu
 
+import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Process
+import android.util.Log
 import androidx.lifecycle.liveData
 import androidx.multidex.MultiDex
 import androidx.preference.PreferenceManager
@@ -61,7 +64,14 @@ class App : Application(), VoIPClient.VoIPListener {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        Log.i("App","onCreate")
+        if(shouldInit()){
+            init()
+        }
+    }
 
+    private fun init(){
+        Log.i("App","init")
         Timber.plant(LogTree())
 
         TTSOutputManager.instance.init()
@@ -70,12 +80,12 @@ class App : Application(), VoIPClient.VoIPListener {
         deviceType = BuildConfig.FLAVOR
         Timber.i("DeviceType: $deviceType")
 
-        adapterWidth = (settingSP.getString("adapter_width", null)?:"1920").toInt()
-        isRecord = settingSP.getBoolean("is_record",false)
+        adapterWidth = (settingSP.getString("adapter_width", null) ?: "1920").toInt()
+        isRecord = settingSP.getBoolean("is_record", false)
 
-        val username = settingSP.getString("username", null)?:""
-        val password = settingSP.getString("password", null)?:""
-        hostDevice = Device(settingSP.getString("host_number", null)?:"","护士站主机")
+        val username = settingSP.getString("username", null) ?: ""
+        val password = settingSP.getString("password", null) ?: ""
+        hostDevice = Device(settingSP.getString("host_number", null) ?: "", "护士站主机")
         deviceInfo = Device(
             username,
             username,
@@ -83,7 +93,7 @@ class App : Application(), VoIPClient.VoIPListener {
         )
         VoIPClient.hostUrl =
             settingSP.getString("host_url", null) ?: resources.getString(R.string.host_url)
-        VoIPClient.voIPParams = VoIPParams.Builder().videoFormat(720,540,15).build()
+        VoIPClient.voIPParams = VoIPParams.Builder().videoFormat(720, 540, 15).build()
         VoIPClient.init(this, username, password, BuildConfig.DEBUG)
 
 //        when (deviceType) {
@@ -119,6 +129,21 @@ class App : Application(), VoIPClient.VoIPListener {
         VoIPClient.receivedCallListener = CallRepository
         VoIPClient.voipListener = this
 
+    }
+
+    private fun shouldInit(): Boolean {
+        val am =
+            getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val processInfos =
+            am.runningAppProcesses
+        val mainProcessName = packageName
+        val myPid = Process.myPid()
+        for (info in processInfos) {
+            if (info.pid == myPid && mainProcessName == info.processName) {
+                return true
+            }
+        }
+        return false
     }
 
     override fun onMessage(memberNumber: String, type: String, message: String) {

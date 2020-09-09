@@ -1,6 +1,7 @@
 package cn.cleartv.icu.repository
 
 import androidx.lifecycle.MutableLiveData
+import androidx.paging.toLiveData
 import cn.cleartv.icu.App
 import cn.cleartv.icu.CallStatus
 import cn.cleartv.icu.DeviceStatus
@@ -43,7 +44,7 @@ object CallRepository : VoIPClient.VoIPCallListener,
 
     val callDao = ICUDatabase.instance.callDao()
 
-    val callRecordList = callDao.getCallList()
+    val callRecordList = callDao.getCallList().toLiveData(pageSize = 20)
 
     fun resetData(isTransfer: Boolean = false) {
         this.isTransfer = isTransfer
@@ -99,13 +100,13 @@ object CallRepository : VoIPClient.VoIPCallListener,
 
     override fun onHangup(message: String) {
         // 当前通话挂断
-        Timber.d("onHangup")
+        Timber.d("onHangup: $message")
         if (isTransfer) {
             Timber.d("isTransfer")
+            resetData(isTransfer)
         } else {
             exitData.postValue(if (message.isNotBlank()) message else "对方已挂断")
         }
-        resetData(isTransfer)
     }
 
     override fun onMgtCancel(mangerNum: String, message: String) {
@@ -149,14 +150,15 @@ object CallRepository : VoIPClient.VoIPCallListener,
 
     override fun onCall(member: VoIPMember) {
         // 收到来电请求
-        Timber.d("onCall: \n ${member.toJsonString()}")
+        Timber.d("onCall VoIPMember: \n ${member.toJsonString()}")
         member.tag?.let {
             val device = JsonUtils.fromJson(it, Device::class.java) ?: Device(
                 member.userNum,
                 name = member.userNum
             )
+            Timber.d("onCall Device: \n $device")
             DeviceRepository.addDevice(device)
-            newCall(device, false)
+            insertCallRecord(member.userNum, false)
 
             if (device.status == DeviceStatus.MONITOR) {
                 if (App.deviceInfo.status == DeviceStatus.IDLE) {
@@ -183,7 +185,6 @@ object CallRepository : VoIPClient.VoIPCallListener,
     override fun onHangup(memberNumber: String, message: String) {
         // 收到挂断消息
         Timber.d("onHangup: \n $memberNumber, \n $message")
-
         callDao.updateCallFinished(memberNumber, message)
 
         callDevices.value?.let {
@@ -193,10 +194,16 @@ object CallRepository : VoIPClient.VoIPCallListener,
         }
     }
 
-    fun newCall(device: Device, amCaller: Boolean) {
+    fun updateCallFinished(memberNumber: String, message: String){
+        Timber.d("updateCallFinished: \n $memberNumber, \n $message")
+        callDao.updateCallFinished(memberNumber, message)
+    }
+
+    fun insertCallRecord(deviceNumber: String, amCaller: Boolean) {
+        Timber.d("insertCallRecord: \n $deviceNumber, \n $amCaller")
         callDao.insert(
             Call(
-                callNumber = device.callNumber,
+                callNumber = deviceNumber,
                 amCaller = amCaller,
                 callStatus = CallStatus.RINGING
             )
@@ -230,5 +237,9 @@ object CallRepository : VoIPClient.VoIPCallListener,
             }
         }
         return call
+    }
+
+    suspend fun deleteCallRecord(){
+        callDao.deleteAll()
     }
 }

@@ -31,6 +31,10 @@
 
     <PreferenceCategory app:title="高级设置">
 
+        <SwitchPreference
+            app:key="is_record"
+            app:title="开启录制"
+            app:defaultValue="false"/>
 
         <EditTextPreference
             app:key="adapter_width"
@@ -38,10 +42,17 @@
             app:defaultValue="1920"
             app:useSimpleSummaryProvider="true" />
 
-        <SwitchPreference
-            app:key="is_record"
-            app:title="开启录制"
-            app:defaultValue="false"/>
+        <Preference
+            app:key="call_record"
+            app:title="查看通话记录" />
+
+        <Preference
+            app:key="clean_device_data"
+            app:title="清空设备数据" />
+
+        <Preference
+            app:key="clean_call_record"
+            app:title="清空通话记录" />
 
         <Preference
             app:key="system_setting"

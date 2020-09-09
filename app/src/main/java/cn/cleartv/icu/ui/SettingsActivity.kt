@@ -16,8 +16,13 @@ import cn.cleartv.icu.BaseActivity
 import cn.cleartv.icu.BuildConfig
 import cn.cleartv.icu.R
 import cn.cleartv.icu.db.entity.Device
+import cn.cleartv.icu.repository.CallRepository
+import cn.cleartv.icu.repository.DeviceRepository
 import cn.cleartv.icu.utils.Utils
 import cn.cleartv.voip.VoIPClient
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class SettingsActivity : BaseActivity() {
 
@@ -92,7 +97,6 @@ class SettingsActivity : BaseActivity() {
                     false
                 }
             }
-
             findPreference<Preference>("reconnect")?.setOnPreferenceClickListener {
                 val username = App.settingSP.getString("username", null) ?: ""
                 val password = App.settingSP.getString("password", null) ?: ""
@@ -114,6 +118,27 @@ class SettingsActivity : BaseActivity() {
                 return@setOnPreferenceChangeListener true
             }
 
+
+            findPreference<Preference>("clean_call_record")?.setOnPreferenceClickListener {
+                CoroutineScope(Dispatchers.IO).launch {
+                    CallRepository.deleteCallRecord()
+                }
+                Utils.showToast("删除成功！")
+                return@setOnPreferenceClickListener true
+            }
+
+            findPreference<Preference>("clean_device_data")?.setOnPreferenceClickListener {
+                CoroutineScope(Dispatchers.IO).launch {
+                    DeviceRepository.deleteAllDevice()
+                }
+                Utils.showToast("删除成功！")
+                return@setOnPreferenceClickListener true
+            }
+
+            findPreference<Preference>("call_record")?.setOnPreferenceClickListener {
+                startActivity(Intent(requireActivity(),CallRecordActivity::class.java))
+                return@setOnPreferenceClickListener true
+            }
         }
     }
 }

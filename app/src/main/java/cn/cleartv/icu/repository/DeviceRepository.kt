@@ -42,7 +42,7 @@ object DeviceRepository {
         deviceDao.deleteAll()
     }
 
-    suspend fun updateOfflineStatus(timeoutMillis: Int = 10000){
+    suspend fun updateOfflineStatus(timeoutMillis: Int = 30000){
         deviceDao.updateOfflineStatus(timeoutMillis)
     }
 }

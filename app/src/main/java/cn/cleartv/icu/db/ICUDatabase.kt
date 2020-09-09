@@ -43,23 +43,22 @@ abstract class ICUDatabase : RoomDatabase() {
                 .addCallback(object : RoomDatabase.Callback(){
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         // init
-                        if(BuildConfig.DEBUG){
-                            CoroutineScope(Dispatchers.IO).launch{
-                                instance.deviceDao().apply {
-                                    insert(Device("10001001",name = "一号床",type = DeviceType.BED))
-                                    insert(Device("10001002",name = "二号床",type = DeviceType.BED))
-                                    insert(Device("10001003",name = "三号床",type = DeviceType.BED))
-                                    insert(Device("10001004",name = "四号床",type = DeviceType.BED))
-                                    insert(Device("10001005",name = "五号床",type = DeviceType.BED))
-                                    insert(Device("10001006",name = "六号床",type = DeviceType.BED))
-                                    insert(Device("10001007",name = "七号床",type = DeviceType.BED))
-                                    insert(Device("10001008",name = "八号床",type = DeviceType.BED))
-                                    insert(Device("10001009",name = "九号床",type = DeviceType.BED))
-                                    insert(Device("10001010",name = "十号床",type = DeviceType.BED))
-                                    insert(Device("10002001",name = "探视机一",type = DeviceType.GUEST))
-                                    insert(Device("10002002",name = "探视机二",type = DeviceType.GUEST))
-                                    insert(Device("10003001",name = "门禁机",type = DeviceType.DOOR))
-                                }
+                        CoroutineScope(Dispatchers.IO).launch{
+                            instance.deviceDao().apply {
+                                insert(Device("10001000",name = "护士站",type = DeviceType.HOST))
+                                insert(Device("10001001",name = "01床",type = DeviceType.BED))
+                                insert(Device("10001002",name = "02床",type = DeviceType.BED))
+                                insert(Device("10001003",name = "03床",type = DeviceType.BED))
+                                insert(Device("10001004",name = "04床",type = DeviceType.BED))
+                                insert(Device("10001005",name = "05床",type = DeviceType.BED))
+                                insert(Device("10001006",name = "06床",type = DeviceType.BED))
+                                insert(Device("10001007",name = "07床",type = DeviceType.BED))
+                                insert(Device("10001008",name = "08床",type = DeviceType.BED))
+                                insert(Device("10001009",name = "09床",type = DeviceType.BED))
+                                insert(Device("10001010",name = "10床",type = DeviceType.BED))
+                                insert(Device("10002001",name = "01探视机",type = DeviceType.GUEST))
+                                insert(Device("10002002",name = "02探视机",type = DeviceType.GUEST))
+                                insert(Device("10003001",name = "门禁机",type = DeviceType.DOOR))
                             }
                         }
                     }

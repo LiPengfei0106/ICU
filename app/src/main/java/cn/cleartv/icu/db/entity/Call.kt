@@ -21,7 +21,7 @@ import com.squareup.moshi.JsonClass
  */
 @JsonClass(generateAdapter = true)
 @Entity(tableName = ICUDatabase.TABLE_CALL)
-data class Call(
+open class Call(
     @CallType
     var callType: String = CallType.CALL,
     @CallStatus
@@ -38,9 +38,6 @@ data class Call(
 
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
-    @Ignore
-    @Embedded(prefix = "device_")
-    val device: Device? = null
 
 
     override fun toString(): String {
@@ -53,8 +50,7 @@ data class Call(
                 "recordUrl=$recordUrl, " +
                 "callTime=$callTime, " +
                 "connectTime=$connectTime, " +
-                "endTime=$endTime, " +
-                "device=$device" +
+                "endTime=$endTime" +
                 ")"
     }
 

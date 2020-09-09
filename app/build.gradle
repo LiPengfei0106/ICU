@@ -146,4 +146,7 @@ dependencies {
     implementation "androidx.multidex:multidex:$multidex_version"
 
     implementation "androidx.preference:preference-ktx:$preference_version"
+
+    implementation "androidx.paging:paging-runtime-ktx:$paging_version" // For Kotlin use paging-runtime-ktx
+
 }

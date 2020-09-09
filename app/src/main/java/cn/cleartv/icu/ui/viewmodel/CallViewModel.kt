@@ -9,6 +9,10 @@ import cn.cleartv.icu.repository.CallRepository
 import cn.cleartv.icu.utils.JsonUtils
 import cn.cleartv.voip.VoIPClient
 import cn.cleartv.voip.entity.VoIPMember
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 /**
@@ -35,9 +39,12 @@ class CallViewModel : BaseViewModel() {
 
     fun hangup(isTransfer: Boolean = false) {
         CallRepository.callDevices.value?.let {
-            if(it.remove(App.deviceInfo.callNumber) != null){
+            if (it.remove(App.deviceInfo.callNumber) != null) {
                 CallRepository.callDevices.postValue(it)
             }
+        }
+        CoroutineScope(Dispatchers.IO).launch {
+            CallRepository.updateCallFinished(App.deviceInfo.callNumber, "已挂断")
         }
         CallRepository.resetData(isTransfer)
         VoIPClient.hangupCall()
@@ -52,8 +59,12 @@ class CallViewModel : BaseViewModel() {
     }
 
     fun startCall(device: Device, amCaller: Boolean, duration: Int = 0) {
+        if(App.deviceInfo.status == DeviceStatus.DISCONNECT){
+            toast("未连接服务器")
+            return
+        }
         CallRepository.callDevices.value?.let {
-            if(it.remove(device.number) != null){
+            if (it.remove(device.number) != null) {
                 CallRepository.callDevices.postValue(it)
             }
         }
@@ -66,14 +77,24 @@ class CallViewModel : BaseViewModel() {
             App.deviceInfo.callNumber = device.number
             App.deviceInfo.status = DeviceStatus.CALLING
             App.deviceInfo.lastOnLineTime = System.currentTimeMillis()
-            VoIPClient.startCall(device.number, true, true, JsonUtils.toJson(App.deviceInfo),App.isRecord)
+            VoIPClient.startCall(
+                device.number,
+                true,
+                true,
+                JsonUtils.toJson(App.deviceInfo),
+                App.isRecord
+            )
             VoIPClient.sendMessage(
                 App.hostDevice.number,
                 "heartbeat",
                 JsonUtils.toJson(App.deviceInfo)
             )
             // 发起通话在这里新增记录，接受通话和通话状态的修改在CallRepository中
-            CallRepository.newCall(App.deviceInfo,true)
+            launchUI {
+                withContext(Dispatchers.IO) {
+                    CallRepository.insertCallRecord(device.number, true)
+                }
+            }
         } else {
             Timber.d("acceptCall")
             App.deviceInfo.callNumber = device.number
@@ -90,7 +111,7 @@ class CallViewModel : BaseViewModel() {
 
     fun transfer(device: Device, duration: Int) {
         hangup(true)
-        startCall(device,true,duration)
+        startCall(device, true, duration)
     }
 
 }

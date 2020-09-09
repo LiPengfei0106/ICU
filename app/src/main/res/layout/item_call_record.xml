@@ -2,11 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="12pt"
-    android:layout_marginBottom="12pt"
-    android:layout_marginStart="24pt"
-    android:layout_marginEnd="24pt"
-    android:padding="12pt"
+    android:paddingBottom="12pt"
+    android:layout_marginStart="12pt"
+    android:layout_marginEnd="12pt"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -31,6 +29,18 @@
 
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@id/iv_status"/>
+
+    <TextView
+        android:id="@+id/tv_time_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="32pt"
+        tools:text="@string/app_name"
+        android:layout_marginStart="24pt"
+
+        app:layout_constraintTop_toTopOf="@id/tv_name"
+        app:layout_constraintBottom_toBottomOf="@id/tv_name"
+        app:layout_constraintStart_toEndOf="@id/tv_name"/>
 
 
     <TextView
@@ -67,5 +77,13 @@
         app:layout_constraintBottom_toBottomOf="@id/tv_message"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1pt"
+        android:background="@color/white"
+        android:layout_marginTop="12pt"
+
+        app:layout_constraintTop_toBottomOf="@id/tv_message"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
