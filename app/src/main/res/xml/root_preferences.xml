@@ -31,6 +31,10 @@
 
     <PreferenceCategory app:title="高级设置">
 
+        <Preference
+            app:key="call_record"
+            app:title="查看通话记录" />
+
         <SwitchPreference
             app:key="is_record"
             app:title="开启录制"
@@ -43,16 +47,23 @@
             app:useSimpleSummaryProvider="true" />
 
         <Preference
-            app:key="call_record"
-            app:title="查看通话记录" />
-
-        <Preference
             app:key="clean_device_data"
             app:title="清空设备数据" />
 
         <Preference
             app:key="clean_call_record"
             app:title="清空通话记录" />
+
+        <EditTextPreference
+            app:key="update_url"
+            app:title="更新地址"
+            app:defaultValue="@string/default_update_url"
+            app:useSimpleSummaryProvider="true" />
+
+        <Preference
+            app:key="version"
+            app:title="版本号"
+            app:useSimpleSummaryProvider="true" />
 
         <Preference
             app:key="system_setting"

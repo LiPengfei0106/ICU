@@ -12,5 +12,8 @@
         <item>30min</item>
     </string-array>
     <string name="title_activity_settings">Settings</string>
+
     <string name="host_url">http://cmcdev.cleartv.cn</string>
+<!--    <string name="host_url">http://192.168.17.110:1888</string>-->
+    <string name="default_update_url">https://pcdn.cleartv.cn/cmc/android/icu</string>
 </resources>

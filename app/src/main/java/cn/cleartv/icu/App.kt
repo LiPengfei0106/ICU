@@ -47,6 +47,7 @@ class App : Application(), VoIPClient.VoIPListener {
         var isRecord = false
 
         lateinit var settingSP: SharedPreferences
+        lateinit var updateUrl: String
 
         val dateTime = liveData {
             while (true) {
@@ -64,14 +65,14 @@ class App : Application(), VoIPClient.VoIPListener {
     override fun onCreate() {
         super.onCreate()
         instance = this
-        Log.i("App","onCreate")
-        if(shouldInit()){
+        Log.i("App", "onCreate")
+        if (shouldInit()) {
             init()
         }
     }
 
-    private fun init(){
-        Log.i("App","init")
+    private fun init() {
+        Log.i("App", "init")
         Timber.plant(LogTree())
 
         TTSOutputManager.instance.init()
@@ -80,12 +81,15 @@ class App : Application(), VoIPClient.VoIPListener {
         deviceType = BuildConfig.FLAVOR
         Timber.i("DeviceType: $deviceType")
 
+        updateUrl = settingSP.getString("update_url", null)
+            ?: resources.getString(R.string.default_update_url)
+
         adapterWidth = (settingSP.getString("adapter_width", null) ?: "1920").toInt()
         isRecord = settingSP.getBoolean("is_record", false)
 
         val username = settingSP.getString("username", null) ?: ""
         val password = settingSP.getString("password", null) ?: ""
-        hostDevice = Device(settingSP.getString("host_number", null) ?: "", "护士站主机")
+        hostDevice = Device(settingSP.getString("host_number", null) ?: "", "护士站")
         deviceInfo = Device(
             username,
             username,
