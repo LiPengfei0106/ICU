@@ -32,8 +32,18 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.CallActivity"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="sensorLandscape"
+            android:launchMode="singleInstance">
+            <intent-filter>
+
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT"/>
+
+            </intent-filter>
+
+        </activity>
         <activity android:name=".ui.MonitorActivity"
+            android:launchMode="singleInstance"
             android:screenOrientation="sensorLandscape"/>
         <activity android:name=".ui.MonitorCallActivity"
             android:screenOrientation="sensorLandscape"/>

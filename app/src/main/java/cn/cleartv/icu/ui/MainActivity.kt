@@ -72,7 +72,8 @@ class MainActivity : BaseActivity() {
             }
         }
         if (App.deviceType != DeviceType.HOST) {
-            viewModel.startHeartBeat()
+            // 挪到了App里面，后台应用也需要
+//            viewModel.startHeartBeat()
         } else {
             viewModel.startCheckDeviceOnLine()
         }

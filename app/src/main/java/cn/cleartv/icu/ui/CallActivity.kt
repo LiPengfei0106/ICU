@@ -89,6 +89,7 @@ class CallActivity : BaseActivity() {
                     } else if (leftSec == 5 || leftSec == 10 || leftSec == 30) {
                         toast("通话时长还剩${leftSec}秒")
                     } else if (leftSec <= 0) {
+                        toast("通话时长已耗尽")
                         finish()
                     }
                 }

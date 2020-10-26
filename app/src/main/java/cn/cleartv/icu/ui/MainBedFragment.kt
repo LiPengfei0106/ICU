@@ -46,15 +46,14 @@ class MainBedFragment : BaseFragment() {
                 })
         }
 
-
-        mainViewModel.callDevices.observe(viewLifecycleOwner, Observer {
-            it.keys.firstOrNull()?.let {key->
-                Intent(requireContext(),CallActivity::class.java).apply {
-                    putExtra("device", JsonUtils.toJson(it[key]?:Device(key)))
-                    putExtra("amCaller",false)
-                    startActivity(this)
-                }
-            }
-        })
+//        mainViewModel.callDevices.observe(viewLifecycleOwner, Observer {
+//            it.keys.firstOrNull()?.let {key->
+//                Intent(requireContext(),CallActivity::class.java).apply {
+//                    putExtra("device", JsonUtils.toJson(it[key]?:Device(key)))
+//                    putExtra("amCaller",false)
+//                    startActivity(this)
+//                }
+//            }
+//        })
     }
 }

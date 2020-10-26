@@ -1,18 +1,19 @@
 package cn.cleartv.icu.repository
 
+import android.content.Intent
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.toLiveData
-import cn.cleartv.icu.App
-import cn.cleartv.icu.CallStatus
-import cn.cleartv.icu.DeviceStatus
-import cn.cleartv.icu.TTSOutputManager
+import cn.cleartv.icu.*
 import cn.cleartv.icu.db.ICUDatabase
 import cn.cleartv.icu.db.entity.Call
 import cn.cleartv.icu.db.entity.Device
+import cn.cleartv.icu.ui.CallActivity
 import cn.cleartv.icu.utils.JsonUtils
 import cn.cleartv.voip.VoIPClient
 import cn.cleartv.voip.annotation.CallRecordStatus
 import cn.cleartv.voip.entity.VoIPMember
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.*
 import kotlin.collections.HashMap
@@ -35,6 +36,8 @@ object CallRepository : VoIPClient.VoIPCallListener,
     val textData = MutableLiveData<String?>()
     val tipData = MutableLiveData<String?>()
 
+    private var monitorNumber = ""
+
 
     val callDevices = MutableLiveData<HashMap<String, Device>>().apply {
         value = HashMap()
@@ -47,6 +50,8 @@ object CallRepository : VoIPClient.VoIPCallListener,
     val callRecordList = callDao.getCallList().toLiveData(pageSize = 20)
 
     fun resetData(isTransfer: Boolean = false) {
+        Timber.i("resetData")
+        monitorNumber = ""
         this.isTransfer = isTransfer
         tipData.postValue(null)
         textData.postValue(null)
@@ -162,6 +167,7 @@ object CallRepository : VoIPClient.VoIPCallListener,
 
             if (device.status == DeviceStatus.MONITOR) {
                 if (App.deviceInfo.status == DeviceStatus.IDLE) {
+                    monitorNumber = member.userNum
                     VoIPClient.acceptCall(
                         member.userNum,
                         true,
@@ -169,13 +175,23 @@ object CallRepository : VoIPClient.VoIPCallListener,
                         JsonUtils.toJson(App.deviceInfo)
                     )
                 } else {
+                    monitorNumber = ""
                     VoIPClient.hangupCall(member.userNum, App.deviceInfo.number, "对方正忙")
                     callDao.updateCallFinished(member.userNum, "未接听")
                 }
             } else {
+                monitorNumber = ""
                 callDevices.value?.let { devices ->
                     devices[device.number] = device
                     callDevices.postValue(devices)
+                    if (App.deviceType != DeviceType.HOST) {
+                        // 这里非主机自动打开通话界面
+                        Intent(App.instance, CallActivity::class.java).apply {
+                            putExtra("device", JsonUtils.toJson(device))
+                            putExtra("amCaller", false)
+                            App.instance.startActivity(this)
+                        }
+                    }
                 }
             }
         }
@@ -184,7 +200,16 @@ object CallRepository : VoIPClient.VoIPCallListener,
 
     override fun onHangup(memberNumber: String, message: String) {
         // 收到挂断消息
-        Timber.d("onHangup: \n $memberNumber, \n $message")
+        Timber.d("onHangup: \n $memberNumber, \n $message, \n${App.deviceInfo.status}, \n$monitorNumber")
+        if(memberNumber == monitorNumber){
+            callDevices.value?.let {
+                it.remove(memberNumber)?.let {_ ->
+                    callDevices.postValue(it)
+                }
+            }
+            resetData(false)
+        }
+
         callDao.updateCallFinished(memberNumber, message)
 
         callDevices.value?.let {
@@ -194,7 +219,7 @@ object CallRepository : VoIPClient.VoIPCallListener,
         }
     }
 
-    fun updateCallFinished(memberNumber: String, message: String){
+    fun updateCallFinished(memberNumber: String, message: String) {
         Timber.d("updateCallFinished: \n $memberNumber, \n $message")
         callDao.updateCallFinished(memberNumber, message)
     }
@@ -239,7 +264,7 @@ object CallRepository : VoIPClient.VoIPCallListener,
         return call
     }
 
-    suspend fun deleteCallRecord(){
+    suspend fun deleteCallRecord() {
         callDao.deleteAll()
     }
 }

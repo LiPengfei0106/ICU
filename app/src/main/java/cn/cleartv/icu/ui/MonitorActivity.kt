@@ -21,7 +21,7 @@ import kotlinx.coroutines.withContext
  *     author : Lee
  *     e-mail : lipengfei@cleartv.cn
  *     time   : 2020/08/22
- *     desc   :
+ *     desc   : 用于监听某个设备
  *     version: 1.0
  * </pre>
  */

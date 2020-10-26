@@ -64,26 +64,24 @@
 
     <cn.cleartv.voip.VoIPSurfaceView
         android:id="@+id/video_1"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="840pt"
+        android:layout_height="630dp"
         android:layout_marginStart="60pt"
         android:layout_marginEnd="18pt"
         android:layout_marginTop="18pt"
 
-        app:layout_constraintDimensionRatio="4:3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/video_2"
         app:layout_constraintTop_toBottomOf="@id/tv_name_1" />
 
     <cn.cleartv.voip.VoIPSurfaceView
         android:id="@+id/video_2"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="840pt"
+        android:layout_height="630dp"
         android:layout_marginEnd="60pt"
         android:layout_marginStart="18pt"
         android:layout_marginTop="18pt"
 
-        app:layout_constraintDimensionRatio="4:3"
         app:layout_constraintStart_toEndOf="@id/video_1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_name_2" />

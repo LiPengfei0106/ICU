@@ -18,8 +18,12 @@ import cn.cleartv.icu.utils.LogTree
 import cn.cleartv.icu.utils.TimeUtils
 import cn.cleartv.voip.VoIPClient
 import cn.cleartv.voip.VoIPParams
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.json.JSONObject
+import org.webrtc.MyVideoDecoderFactory
 import timber.log.Timber
 import java.util.*
 
@@ -42,9 +46,10 @@ class App : Application(), VoIPClient.VoIPListener {
         lateinit var deviceType: String
         lateinit var hostDevice: Device
         lateinit var deviceInfo: Device
-        var adapterWidth: Int = 1920
+        var adapterWidth: Int = 2222
 
         var isRecord = false
+        var userHardwareDecode = false
 
         lateinit var settingSP: SharedPreferences
         lateinit var updateUrl: String
@@ -64,7 +69,6 @@ class App : Application(), VoIPClient.VoIPListener {
 
     override fun onCreate() {
         super.onCreate()
-        instance = this
         Log.i("App", "onCreate")
         if (shouldInit()) {
             init()
@@ -73,6 +77,7 @@ class App : Application(), VoIPClient.VoIPListener {
 
     private fun init() {
         Log.i("App", "init")
+        instance = this
         Timber.plant(LogTree())
 
         TTSOutputManager.instance.init()
@@ -84,12 +89,13 @@ class App : Application(), VoIPClient.VoIPListener {
         updateUrl = settingSP.getString("update_url", null)
             ?: resources.getString(R.string.default_update_url)
 
-        adapterWidth = (settingSP.getString("adapter_width", null) ?: "1920").toInt()
-        isRecord = settingSP.getBoolean("is_record", false)
+        adapterWidth = (settingSP.getString("adapter_width", null) ?: resources.getString(R.string.default_adapter_width)).toInt()
+        isRecord = settingSP.getBoolean("is_record", true)
+        userHardwareDecode = settingSP.getBoolean("use_hardware_decode", false)
 
         val username = settingSP.getString("username", null) ?: ""
-        val password = settingSP.getString("password", null) ?: ""
-        hostDevice = Device(settingSP.getString("host_number", null) ?: "", "护士站")
+        val password = settingSP.getString("password", null) ?: resources.getString(R.string.default_password)
+        hostDevice = Device(settingSP.getString("host_number", null) ?: resources.getString(R.string.default_host_number), "护士站")
         deviceInfo = Device(
             username,
             username,
@@ -97,9 +103,13 @@ class App : Application(), VoIPClient.VoIPListener {
         )
         VoIPClient.hostUrl =
             settingSP.getString("host_url", null) ?: resources.getString(R.string.host_url)
-        VoIPClient.voIPParams = VoIPParams.Builder().videoFormat(720, 540, 15).build()
+        VoIPClient.voIPParams = VoIPParams.Builder()
+            .userHardwareVideoDecoder(userHardwareDecode)
+            .videoFormat(720, 540, 15).build()
         VoIPClient.init(this, username, password, BuildConfig.DEBUG)
-
+        if (deviceType != DeviceType.HOST) {
+            startHeartBeat()
+        }
 //        when (deviceType) {
 //            DeviceType.HOST -> {
 //                deviceInfo = Device("10001000", "10001000", type = deviceType)
@@ -161,6 +171,7 @@ class App : Application(), VoIPClient.VoIPListener {
                         message,
                         Device::class.java
                     )?.let {
+                        it.lastOnLineTime = System.currentTimeMillis()
                         DeviceRepository.addDevice(it)
                     }
                 } catch (e: Exception) {
@@ -173,5 +184,20 @@ class App : Application(), VoIPClient.VoIPListener {
     override fun onPong(data: JSONObject) {
         // TODO 更新本地时间
         Timber.d("onPong: \n $data")
+    }
+
+
+    fun startHeartBeat() {
+        CoroutineScope(Dispatchers.IO).launch {
+            while (true) {
+                deviceInfo.lastOnLineTime = System.currentTimeMillis()
+                VoIPClient.sendMessage(
+                    hostDevice.number,
+                    "heartbeat",
+                    JsonUtils.toJson(deviceInfo)
+                )
+                delay(10000)
+            }
+        }
     }
 }

@@ -11,8 +11,8 @@ android {
         applicationId "cn.cleartv.icu"
         minSdkVersion minSdk
         targetSdkVersion targetSdk
-        versionCode 1
-        versionName "v0.1"
+        versionCode 12
+        versionName "v1.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true

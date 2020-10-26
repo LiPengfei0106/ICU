@@ -12,6 +12,7 @@
         <EditTextPreference
             app:key="host_number"
             app:title="主机号"
+            app:defaultValue="@string/default_host_number"
             app:useSimpleSummaryProvider="true" />
 
         <EditTextPreference
@@ -21,6 +22,7 @@
 
         <cn.cleartv.icu.utils.PasswordEditTextPreference
             app:key="password"
+            app:defaultValue="@string/default_password"
             app:title="密码" />
 
         <Preference
@@ -36,14 +38,19 @@
             app:title="查看通话记录" />
 
         <SwitchPreference
+            app:key="use_hardware_decode"
+            app:title="开启硬解码"
+            app:defaultValue="false"/>
+
+        <SwitchPreference
             app:key="is_record"
             app:title="开启录制"
-            app:defaultValue="false"/>
+            app:defaultValue="true"/>
 
         <EditTextPreference
             app:key="adapter_width"
             app:title="适配宽度"
-            app:defaultValue="1920"
+            app:defaultValue="@string/default_adapter_width"
             app:useSimpleSummaryProvider="true" />
 
         <Preference
