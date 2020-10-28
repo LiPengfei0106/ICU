@@ -18,6 +18,7 @@ import cn.cleartv.icu.utils.LogTree
 import cn.cleartv.icu.utils.TimeUtils
 import cn.cleartv.voip.VoIPClient
 import cn.cleartv.voip.VoIPParams
+import cn.cleartv.voip.VoIPService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -53,6 +54,9 @@ class App : Application(), VoIPClient.VoIPListener {
 
         lateinit var settingSP: SharedPreferences
         lateinit var updateUrl: String
+
+        var timeInterval = 0L
+            private set
 
         val dateTime = liveData {
             while (true) {
@@ -101,6 +105,8 @@ class App : Application(), VoIPClient.VoIPListener {
             username,
             type = deviceType
         )
+        // 断线后，最长5分钟之内重连，默认是512
+        VoIPService.maxReconnectDelaySec = 256
         VoIPClient.hostUrl =
             settingSP.getString("host_url", null) ?: resources.getString(R.string.host_url)
         VoIPClient.voIPParams = VoIPParams.Builder()
@@ -184,6 +190,7 @@ class App : Application(), VoIPClient.VoIPListener {
     override fun onPong(data: JSONObject) {
         // TODO 更新本地时间
         Timber.d("onPong: \n $data")
+        timeInterval = data.optLong("date") - System.currentTimeMillis()
     }
 
 

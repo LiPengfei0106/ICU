@@ -44,13 +44,14 @@ class CallRecordActivity : BaseActivity() {
                         val call = withContext(Dispatchers.IO) {
                             CallRepository.updateCallRecord(it.getItem(position))
                         }
+                        adapter.notifyDataSetChanged()
                         when (call.recordStatus) {
                             "NONE" -> toast("无录制记录")
-                            CallRecordStatus.RECORDING -> toast("录制中")
-                            CallRecordStatus.CREATE -> toast("录制创建中")
-                            CallRecordStatus.FAIL -> toast("录制失败")
-                            CallRecordStatus.UPLOADING -> toast("录制上传中")
-                            CallRecordStatus.WAITUPLOAD -> toast("录制等待上传中")
+                            CallRecordStatus.RECORDING -> toast(R.string.recording)
+                            CallRecordStatus.CREATE -> toast(R.string.record_create)
+                            CallRecordStatus.FAIL -> toast(R.string.record_failed)
+                            CallRecordStatus.UPLOADING -> toast(R.string.record_uploading)
+                            CallRecordStatus.WAITUPLOAD -> toast(R.string.record_wait_upload)
                             CallRecordStatus.COMPLETE -> {
                                 Intent(this@CallRecordActivity,VideoPlayerActivity::class.java).apply {
                                     putExtra("url",call.recordUrl)

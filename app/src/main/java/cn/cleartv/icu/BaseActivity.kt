@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.WindowManager
 import androidx.annotation.LayoutRes
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import cn.cleartv.icu.utils.AdaptScreenUtils
 import cn.cleartv.icu.utils.OnKeyDownHandlerHelper
@@ -43,6 +44,10 @@ abstract class BaseActivity : AppCompatActivity() {
 
     protected open fun toast(msg: String) {
         Utils.showToast(msg)
+    }
+
+    protected open fun toast(@StringRes res: Int) {
+        Utils.showToast(res)
     }
 
     protected open fun startActivity(activityCls: Class<out Activity>) {

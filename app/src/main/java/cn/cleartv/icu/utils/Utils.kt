@@ -1,6 +1,7 @@
 package cn.cleartv.icu.utils
 
 import android.widget.Toast
+import androidx.annotation.StringRes
 import cn.cleartv.icu.App
 
 /**
@@ -18,6 +19,13 @@ object Utils {
     fun showToast(content: String) {
         (toast ?: (Toast.makeText(App.instance,content,Toast.LENGTH_SHORT))).let {
             it.setText(content)
+            it.show()
+        }
+    }
+
+    fun showToast(@StringRes res: Int) {
+        (toast ?: (Toast.makeText(App.instance,res,Toast.LENGTH_SHORT))).let {
+            it.setText(res)
             it.show()
         }
     }

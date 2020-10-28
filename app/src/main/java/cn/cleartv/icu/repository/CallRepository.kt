@@ -237,14 +237,14 @@ object CallRepository : VoIPClient.VoIPCallListener,
 
     suspend fun updateCallRecord(call: Call): Call {
         // 查询这个通话的录像地址并更新，成功的或者没有开启录制的就不查了
-        if (call.callStatus != CallRecordStatus.COMPLETE && call.recordStatus != "NONE") {
+        if (call.callStatus != CallRecordStatus.COMPLETE) {
             val from = if (call.amCaller) App.deviceInfo.number else call.callNumber
             val to = if (!call.amCaller) App.deviceInfo.number else call.callNumber
             VoIPClient.getCallRecordList(
                 from,
                 to,
-                Date(call.callTime),
-                if (call.endTime > 0) Date(call.endTime) else Date()
+                Date(call.callTime + App.timeInterval),
+                if (call.endTime > 0) Date(call.endTime + App.timeInterval) else Date(System.currentTimeMillis() + App.timeInterval)
             ).firstOrNull().let {
                 when (it?.status) {
                     CallRecordStatus.COMPLETE -> {

@@ -20,4 +20,14 @@
     <string name="default_adapter_width">2222</string>
     <string name="default_host_number">100000</string>
     <string name="default_password">123456</string>
+
+
+    <string name="watch_record">观看录像</string>
+    <string name="no_record">无录像</string>
+    <string name="record_create">正在创建录像</string>
+    <string name="record_uploading">录像上传中\.\.\.</string>
+    <string name="record_wait_upload">等待上传录像</string>
+    <string name="recording">录制中\.\.\.</string>
+    <string name="record_failed">录制失败</string>
+
 </resources>

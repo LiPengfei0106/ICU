@@ -46,10 +46,28 @@ class CallRecordAdapter(data: MutableList<CallDetail>? = null) :
 //            .setText(R.id.tv_message,item.mark)
             .setText(R.id.tv_call_time,TimeUtils.getFriendlyTimeSpanByNow(item.callTime))
 
-        if(item.recordStatus == CallRecordStatus.COMPLETE){
-            holder.setText(R.id.tv_record_status,"观看录像")
-        }else if(item.recordStatus == "NONE"){
-            holder.setText(R.id.tv_record_status,"无录像")
+        when (item.recordStatus) {
+            CallRecordStatus.COMPLETE -> {
+                holder.setText(R.id.tv_record_status,R.string.watch_record)
+            }
+            CallRecordStatus.CREATE -> {
+                holder.setText(R.id.tv_record_status,R.string.record_create)
+            }
+            "NONE" -> {
+                holder.setText(R.id.tv_record_status,R.string.no_record)
+            }
+            CallRecordStatus.UPLOADING -> {
+                holder.setText(R.id.tv_record_status,R.string.record_uploading)
+            }
+            CallRecordStatus.WAITUPLOAD -> {
+                holder.setText(R.id.tv_record_status,R.string.record_wait_upload)
+            }
+            CallRecordStatus.RECORDING -> {
+                holder.setText(R.id.tv_record_status,R.string.recording)
+            }
+            CallRecordStatus.FAIL -> {
+                holder.setText(R.id.tv_record_status,R.string.record_failed)
+            }
         }
 
         if(item.connectTime > 0){
