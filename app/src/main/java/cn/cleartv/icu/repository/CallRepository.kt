@@ -9,6 +9,7 @@ import cn.cleartv.icu.db.entity.Call
 import cn.cleartv.icu.db.entity.Device
 import cn.cleartv.icu.ui.CallActivity
 import cn.cleartv.icu.utils.JsonUtils
+import cn.cleartv.icu.utils.TimeUtils
 import cn.cleartv.voip.VoIPClient
 import cn.cleartv.voip.annotation.CallRecordStatus
 import cn.cleartv.voip.entity.VoIPMember
@@ -65,7 +66,7 @@ object CallRepository : VoIPClient.VoIPCallListener,
         if (DeviceStatus.CALLING == App.deviceInfo.status) {
             App.deviceInfo.status = DeviceStatus.IN_CALL_CALLER
         }
-        App.deviceInfo.lastOnLineTime = System.currentTimeMillis()
+        App.deviceInfo.lastOnLineTime = TimeUtils.nowMills
         VoIPClient.sendMessage(
             App.hostDevice.number,
             "heartbeat",
@@ -243,8 +244,8 @@ object CallRepository : VoIPClient.VoIPCallListener,
             VoIPClient.getCallRecordList(
                 from,
                 to,
-                Date(call.callTime + App.timeInterval),
-                if (call.endTime > 0) Date(call.endTime + App.timeInterval) else Date(System.currentTimeMillis() + App.timeInterval)
+                TimeUtils.nowDate,
+                if (call.endTime > 0) Date(call.endTime + TimeUtils.timeInterval) else TimeUtils.nowDate
             ).firstOrNull().let {
                 when (it?.status) {
                     CallRecordStatus.COMPLETE -> {

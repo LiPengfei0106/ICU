@@ -1,6 +1,7 @@
 package cn.cleartv.icu.utils
 
 import androidx.annotation.IntDef
+import cn.cleartv.icu.App
 import java.text.DateFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -376,13 +377,15 @@ object TimeUtils {
         return millis2FitTimeSpan(millis1 - millis2, precision)
     }
 
+    var timeInterval = 0L
+
     /**
      * Return the current time in milliseconds.
      *
      * @return the current time in milliseconds
      */
     val nowMills: Long
-        get() = System.currentTimeMillis()
+        get() = System.currentTimeMillis() + timeInterval
 
     /**
      * Return the current formatted time string.
@@ -393,7 +396,7 @@ object TimeUtils {
      */
     val nowString: String
         get() = millis2String(
-            System.currentTimeMillis(),
+            nowMills,
             defaultFormat
         )
 
@@ -405,7 +408,7 @@ object TimeUtils {
      */
     fun getNowString(format: DateFormat): String {
         return millis2String(
-            System.currentTimeMillis(),
+            nowMills,
             format
         )
     }
@@ -416,7 +419,7 @@ object TimeUtils {
      * @return the current date
      */
     val nowDate: Date
-        get() = Date()
+        get() = Date(nowMills)
 
     /**
      * Return the time span by now, in unit.
@@ -476,7 +479,7 @@ object TimeUtils {
      * @return the time span by now, in unit
      */
     fun getTimeSpanByNow(date: Date, @TimeUnit unit: Int): Long {
-        return getTimeSpan(date, Date(), unit)
+        return getTimeSpan(date, nowDate, unit)
     }
 
     /**
@@ -494,7 +497,7 @@ object TimeUtils {
      * @return the time span by now, in unit
      */
     fun getTimeSpanByNow(millis: Long, @TimeUnit unit: Int): Long {
-        return getTimeSpan(millis, System.currentTimeMillis(), unit)
+        return getTimeSpan(millis, nowMills, unit)
     }
 
     /**
@@ -573,7 +576,7 @@ object TimeUtils {
      * @return the fit time span by now
      */
     fun getFitTimeSpanByNow(millis: Long, precision: Int): String? {
-        return getFitTimeSpan(millis, System.currentTimeMillis(), precision)
+        return getFitTimeSpan(millis, nowMills, precision)
     }
 
     /**
@@ -654,7 +657,7 @@ object TimeUtils {
      *
      */
     fun getFriendlyTimeSpanByNow(millis: Long): String {
-        val now = System.currentTimeMillis()
+        val now = nowMills
         val span = now - millis
         when {
             span < 0 -> return String.format("%tc", millis)
@@ -1180,6 +1183,15 @@ object TimeUtils {
      */
     fun getChineseWeek(time: String, format: DateFormat): String? {
         return string2Date(time, format)?.let { getChineseWeek(it) }
+    }
+
+    /**
+     * Return the day of week in Chinese.
+     *
+     * @return the day of week in Chinese
+     */
+    fun getChineseWeek(): String {
+        return SimpleDateFormat("E", Locale.CHINA).format(nowDate)
     }
 
     /**

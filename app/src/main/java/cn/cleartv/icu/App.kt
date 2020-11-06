@@ -55,12 +55,9 @@ class App : Application(), VoIPClient.VoIPListener {
         lateinit var settingSP: SharedPreferences
         lateinit var updateUrl: String
 
-        var timeInterval = 0L
-            private set
-
         val dateTime = liveData {
             while (true) {
-                emit(TimeUtils.nowString + "  " + TimeUtils.getChineseWeek(Date()))
+                emit(TimeUtils.nowString + "  " + TimeUtils.getChineseWeek())
                 delay(1000)
             }
         }
@@ -177,7 +174,7 @@ class App : Application(), VoIPClient.VoIPListener {
                         message,
                         Device::class.java
                     )?.let {
-                        it.lastOnLineTime = System.currentTimeMillis()
+                        it.lastOnLineTime = TimeUtils.nowMills
                         DeviceRepository.addDevice(it)
                     }
                 } catch (e: Exception) {
@@ -190,14 +187,13 @@ class App : Application(), VoIPClient.VoIPListener {
     override fun onPong(data: JSONObject) {
         // TODO 更新本地时间
         Timber.d("onPong: \n $data")
-        timeInterval = data.optLong("date") - System.currentTimeMillis()
+        TimeUtils.timeInterval = data.optLong("date") - System.currentTimeMillis()
     }
 
 
     fun startHeartBeat() {
         CoroutineScope(Dispatchers.IO).launch {
             while (true) {
-                deviceInfo.lastOnLineTime = System.currentTimeMillis()
                 VoIPClient.sendMessage(
                     hostDevice.number,
                     "heartbeat",

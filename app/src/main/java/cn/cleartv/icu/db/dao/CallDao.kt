@@ -9,6 +9,7 @@ import androidx.room.Query
 import cn.cleartv.icu.CallStatus
 import cn.cleartv.icu.db.entity.Call
 import cn.cleartv.icu.db.entity.CallDetail
+import cn.cleartv.icu.utils.TimeUtils
 
 
 /**
@@ -60,13 +61,13 @@ interface CallDao {
     fun getCallList(): DataSource.Factory<Int, CallDetail>
 
     @Query("UPDATE call_table SET callStatus='${CallStatus.CALLING}', connectTime=:time WHERE callNumber=:callNumber AND callStatus='${CallStatus.RINGING}'")
-    fun updateCallConnect(callNumber: String, time: Long = System.currentTimeMillis())
+    fun updateCallConnect(callNumber: String, time: Long = TimeUtils.nowMills)
 
     @Query("UPDATE call_table SET callStatus='${CallStatus.FINISHED}', endTime=:time, mark=:message WHERE callNumber=:callNumber AND (callStatus='${CallStatus.RINGING}' OR callStatus='${CallStatus.CALLING}')")
     fun updateCallFinished(
         callNumber: String,
         message: String?,
-        time: Long = System.currentTimeMillis()
+        time: Long = TimeUtils.nowMills
     )
 
     @Query("DELETE FROM call_table")
