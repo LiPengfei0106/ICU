@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import cn.cleartv.icu.DeviceType
 import cn.cleartv.icu.db.entity.Device
+import cn.cleartv.icu.utils.TimeUtils
 
 
 /**
@@ -44,5 +45,5 @@ interface DeviceDao {
     suspend fun updateDeviceStatus()
 
     @Query("UPDATE devices_table SET status='DISCONNECT' WHERE status!='DISCONNECT' AND lastOnLineTime+:timeoutMillis<:currentTimeMillis")
-    suspend fun updateOfflineStatus(timeoutMillis: Int,currentTimeMillis: Long = System.currentTimeMillis())
+    suspend fun updateOfflineStatus(timeoutMillis: Int,currentTimeMillis: Long = TimeUtils.nowMills)
 }
